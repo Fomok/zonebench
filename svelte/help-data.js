@@ -15,7 +15,7 @@ export const blocks=[
   ["Saves and upgrades", "Updating from 2.0.x to 2.0.6 does not require a new game. Keep the 2.0.3 custom engine; update it if you still use an older engine. First installation and upgrading from before 2.0 require a new game. Keep add-ons installed while your save contains their items."],
   [
     "SOTA UI and HD Inventory Icons",
-    "SOTA UI is optional. Choose SOTA UI Compatibility (GAMMA) or SOTA UI Compatibility (ZONA) in the matching installer group, only if that SOTA UI and its requirements are installed. Do not combine both groups. HD Inventory Icons Framework is required so item icons display correctly in the inventory. Choose its SOTA-patched version with SOTA, or its non-SOTA version without it. Never enable both. Place Squared Away below those UI mods in the MO2 left pane so its files win conflicts. Both UI choices use the Field Kit artwork and support the Tarkov-like and Anomaly default layouts."
+    "SOTA UI is optional. Choose SOTA UI Compatibility (GAMMA) or SOTA UI Compatibility (ZONA) in the matching installer group, only if that SOTA UI and its requirements are installed. Do not combine both groups. HD Inventory Icons Framework is required so item icons display correctly in the inventory. Install the framework with all compatibility patches required by your installed mods. Add its SOTA patch when using SOTA; leave that patch unchecked otherwise. The other required patches still need to be selected. Place Squared Away below those UI mods in the MO2 left pane so its files win conflicts. Both UI choices use the Field Kit artwork and support the Tarkov-like and Anomaly default layouts."
   ],
   [
     "Wearable Devices support",
