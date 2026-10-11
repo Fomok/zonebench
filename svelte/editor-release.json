@@ -1,8 +1,8 @@
 {
-  "revision": 6,
+  "revision": 7,
   "exportRevision": 2,
   "title": "Save-safe add-on IDs",
   "message": "New item exports now use shorter IDs to prevent save-loading crashes. Re-export older add-ons and their dependent recipes together. Existing saves containing old items need offline migration before loading; re-downloading alone does not repair a save. Keep your original save and add-on backups.",
   "requiresRedownload": true,
-  "downloadNotice": "Back up your saves and old add-ons first. Saves containing old item IDs need migration before using the replacement add-ons."
+  "downloadNotice": "Use Repair an existing save at the bottom of Help to create a migrated copy on your device. Back up your saves and old add-ons before replacing them."
 }
