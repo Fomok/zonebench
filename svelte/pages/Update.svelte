@@ -1,7 +1,8 @@
 <script>
+ import EngineNotice from '../components/EngineNotice.svelte';
  import {updatePlan} from '../lib/update-plan.mjs';
  const result=window.Releases.load();
- let installed=$state(''),variant=$state('standard');
+ let installed=$state(''),variant=$state('standard'),installedEngine=$state('previous');
  const version=r=>r.tag.replace(/^v/,'').replace(/-update$/,'');
 </script>
 <div class="field-page update-page">
@@ -14,16 +15,17 @@
     <div><p class="eyebrow">YOUR INSTALLATION</p><h2>What are you running?</h2><p class="hint">Check the version of Squared Away installed in MO2.</p></div>
     <label>Installed mod version<select bind:value={installed}><option value="" disabled>Choose your version</option>{#each data.items.filter(r=>!r.preview&&/^v2\./.test(r.tag)) as release}<option value={release.tag}>{version(release)}</option>{/each}<option value="legacy">Before the 2.0 Update</option><option value="unknown">I’m not sure / another version</option></select></label>
     <fieldset><legend>Which engine do you use?</legend><div class="engine-options"><label class:selected={variant==='standard'}><input type="radio" bind:group={variant} value="standard"/>Standard</label><label class:selected={variant==='bodycam'}><input type="radio" bind:group={variant} value="bodycam"/>Bodycam</label></div></fieldset>
+   {#if data.items[0].engineUpdate}<label>Installed engine version<select bind:value={installedEngine}><option value="previous">2.0.3 or older / I’m not sure</option><option value={data.items[0].engineUpdate.tag}>{data.items[0].engineUpdate.version}</option></select></label>{/if}
    </section>
-   {@const plan=updatePlan(data.items,installed,variant)}
+   {@const plan=updatePlan(data.items,installed,variant,installedEngine)}
    {#if plan}
     <section class="release-panel" aria-live="polite">
      <p class="eyebrow">YOUR UPDATE · {version(plan.latest)}</p>
-     <h2>{plan.modNeeded?'Here’s what you need.':plan.engineNeeded?'Check your engine.':'You’re up to date.'}</h2>
+     <h2>{plan.modNeeded?'Here’s what you need.':plan.engineNeeded?'An engine update is available.':'You’re up to date.'}</h2>
      {#if plan.unknown}<p>We can’t verify your installed files. Install both current packages to make sure they match.</p>{/if}
      {#if plan.modNeeded}<div class="download-step"><div><h3>Update the mod</h3><p>Replace your old Squared Away installation in MO2 with this full package. Select the same optional patches you use now, and keep your separate add-ons below it.</p></div><a class="tool primary" href={plan.latest.mod.browser_download_url}>Download mod {version(plan.latest)}</a></div>{/if}
-     {#if plan.engineNeeded}<div class="download-step"><div><h3>Update your {variant==='bodycam'?'Bodycam':'standard'} engine</h3><p>Install both <strong>bin</strong> and <strong>db/mods</strong> from the matching engine ZIP into your Anomaly folder.{variant==='bodycam'?' The Bodycam package is DX11-AVX only.':''}</p></div>{#if plan.engine}<a class="tool primary" href={plan.engine.browser_download_url}>Download {variant==='bodycam'?'Bodycam':'standard'} engine</a>{:else}<p role="alert">No matching engine package is available. Check the release before updating.</p>{/if}</div>{:else}<div class="keep-engine"><strong>Keep your current engine.</strong><p>This release uses the same {variant==='bodycam'?'Bodycam':'standard'} engine package as your installed version. No engine download is needed.</p></div>{/if}
-     <p class:important={plan.newGame}>{plan.newGame?'New game required: saves from before the 2.0 Update are not supported.':plan.unknown?'Already playing on 2.0.x? You can keep your save. Coming from before 2.0? Start a new game.':'Your existing 2.0.x save can continue.'}</p>
+     {#if plan.engineNeeded}<div class="download-step"><div><h3>Update your {variant==='bodycam'?'Bodycam':'standard'} engine</h3><p>Install both <strong>bin</strong> and <strong>db/mods</strong> from the matching engine ZIP into your Anomaly folder.{variant==='bodycam'?' The Bodycam package is DX11-AVX only.':''}</p></div>{#if plan.engine}<a class="tool primary" href={plan.engine.browser_download_url}>Download {variant==='bodycam'?'Bodycam':'standard'} engine</a>{:else}<p role="alert">No matching engine package is available. Check the release before updating.</p>{/if}</div>{:else}<div class="keep-engine"><strong>Keep your current engine.</strong><p>Your selected {variant==='bodycam'?'Bodycam':'standard'} engine is current. No engine download is needed.</p></div>{/if}
+     <EngineNotice update={plan.latest.engineUpdate}/><p class:important={plan.newGame}>{plan.newGame?'New game required: saves from before the 2.0 Update are not supported.':plan.unknown?'Already playing on 2.0.x? You can keep your save. Coming from before 2.0? Start a new game.':'Your existing 2.0.x save can continue.'}</p>
      <div class="site-actions"><a class="tool" href="#patch-notes">What changed?</a><a class="tool" href="#help">Installation help</a></div>
     </section>
    {/if}

@@ -1,5 +1,5 @@
 export const blocks=[
-  ["Squared Away 2.0.6", "ZoneBench targets Squared Away 2.0.6 with independent add-on support. Install the full mod through MO2 and use the standard or Bodycam 2.0.3 engine. Existing 2.0.x saves can continue. Downloads and patch-note history are available on this website."],
+  ["Squared Away 2.0.6", "ZoneBench targets Squared Away 2.0.6 with independent add-on support. Install the full mod through MO2 and use the standard or Bodycam 2026.10.11 engine. Existing 2.0.x saves can continue. Downloads and patch-note history are available on this website."],
   [
     "Install the mod",
     "Use Anomaly 1.5.3, GAMMA or ZONA V1.38. Install the full Squared Away ZIP through Mod Organizer 2 (MO2). Its FOMOD installer lets you choose optional patches. Replace an older Squared Away installation instead of merging files, and disable old copies and hotfixes. Select only patches for mods you actually have."
@@ -10,9 +10,9 @@ export const blocks=[
   ],
   [
     "Engine choices and developer files",
-    "The all-DX engine package includes DX8, DX9, DX10 and DX11 executables, each with AVX and non-AVX versions. Choose a renderer supported by your setup, and use AVX only if your CPU supports it. The separate For Developers ZIP is for engine authors merging changes; players do not need it. Always use the engine paired with your mod release in Downloads. Bodycam users can choose the optional combined Bodycam engine for 2.0.3 instead of the standard package. It supports DX11-AVX only and includes its matching DB0. Install both bin and db/mods from that ZIP. For PiP scopes, keep the matching external 3DSS PiP compatibility content required by Bodycam."
+    "The all-DX engine package includes DX8, DX9, DX10 and DX11 executables, each with AVX and non-AVX versions. Choose a renderer supported by your setup, and use AVX only if your CPU supports it. The separate For Developers ZIP is for engine authors merging changes; players do not need it. Always use the engine paired with your mod release in Downloads. Bodycam users can choose the optional combined Bodycam engine for 2026.10.11 instead of the standard package. It supports DX11-AVX only and includes its matching DB0. Install both bin and db/mods from that ZIP. For PiP scopes, keep the matching external 3DSS PiP compatibility content required by Bodycam."
   ],
-  ["Saves and upgrades", "Updating from 2.0.x to 2.0.6 does not require a new game. Keep the 2.0.3 custom engine; update it if you still use an older engine. First installation and upgrading from before 2.0 require a new game. Keep add-ons installed while your save contains their items."],
+  ["Saves and upgrades", "Updating from 2.0.x to 2.0.6 does not require a new game. The 2026.10.11 engine update is available separately; the 2.0.3 engines remain available as a fallback. First installation and upgrading from before 2.0 require a new game. Keep add-ons installed while your save contains their items."],
   [
     "SOTA UI and HD Inventory Icons",
     "SOTA UI is optional. Choose SOTA UI Compatibility (GAMMA) or SOTA UI Compatibility (ZONA) in the matching installer group, only if that SOTA UI and its requirements are installed. Do not combine both groups. HD Inventory Icons Framework is required so item icons display correctly in the inventory. Install the framework with all compatibility patches required by your installed mods. Add its SOTA patch when using SOTA; leave that patch unchecked otherwise. The other required patches still need to be selected. Place Squared Away below those UI mods in the MO2 left pane so its files win conflicts. Both UI choices use the Field Kit artwork and support the Tarkov-like and Anomaly default layouts."
@@ -27,7 +27,7 @@ export const blocks=[
   ],
   [
     "Magazine support",
-    "For ZONA V1.38, keep its Magazines Redux setup and choose Mags Redux ammo fix under ZONA compatibility. This does not require Dynamic Reload Speeds. For GAMMA, the baseline is Mags Reloaded Fork by Priler UPDATE 6. Install it separately for magazine support and the three stock expansion pouches. It also requires Dynamic Reload Speeds. Select the optional Mags Reloaded ammo fix in the FOMOD with Mags Reloaded Fork by Priler UPDATE 6 and its Dynamic Reload Speeds dependency installed. It requires the 2.0.3 engine. Let Squared Away win their file conflicts in MO2. The direct download message is linked below. GAMMA recipes and trader integrations also need their corresponding GAMMA content; plain Anomaly does not include those dependencies automatically."
+    "For ZONA V1.38, keep its Magazines Redux setup and choose Mags Redux ammo fix under ZONA compatibility. This does not require Dynamic Reload Speeds. For GAMMA, the baseline is Mags Reloaded Fork by Priler UPDATE 6. Install it separately for magazine support and the three stock expansion pouches. It also requires Dynamic Reload Speeds. Select the optional Mags Reloaded ammo fix in the FOMOD with Mags Reloaded Fork by Priler UPDATE 6 and its Dynamic Reload Speeds dependency installed. It requires the 2.0.3 engine or newer. Let Squared Away win their file conflicts in MO2. The direct download message is linked below. GAMMA recipes and trader integrations also need their corresponding GAMMA content; plain Anomaly does not include those dependencies automatically."
   ],
   [
     "Inventory, rigs and containers",

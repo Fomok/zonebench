@@ -9,11 +9,13 @@ function pick(release){
  const safe=a=>{try{const u=new URL(a.browser_download_url);return u.protocol==='https:'&&u.hostname==='github.com'&&u.pathname.startsWith('/'+repo+'/releases/download/');}catch{return false;}};
  if(!safe(mod[0])||!safe(engine[0]))return null;
  const bodycam=release.assets.filter(a=>/bodycam/i.test(a.name)&&/engine/i.test(a.name)&&/\.zip$/i.test(a.name)&&safe(a));
- return {tag:release.tag_name,name:release.name||release.tag_name,preview:!!release.prerelease,date:release.published_at,notes:release.body||'',url:'https://github.com/'+repo+'/releases/tag/'+encodeURIComponent(release.tag_name),mod:mod[0],engine:engine[0],bodycam:bodycam.length===1?bodycam[0]:null};
+ return {tag:release.tag_name,name:release.name||release.tag_name,preview:!!release.prerelease,date:release.published_at,notes:release.body||'',url:'https://github.com/'+repo+'/releases/tag/'+encodeURIComponent(release.tag_name),mod:mod[0],engine:engine[0],engineUpdate:release.engineUpdate||null,bodycam:bodycam.length===1?bodycam[0]:null};
 }
 function compatible(raw){
  const previous=raw.find(r=>r.tag_name==='v2.0.3'&&!r.draft);
- return raw.map(r=>['v2.0.4','v2.0.5','v2.0.6','v2.0.6-hotfix','v2.0.6-hotfix2','v2.0.6-hotfix3','v2.0.6-hotfix4'].includes(r.tag_name)&&previous?{...r,assets:[...r.assets,...previous.assets.filter(a=>/Engine|Developers/i.test(a.name))]}:r);
+ const update=raw.find(r=>r.tag_name==='engine-2026.10.11'&&!r.draft&&!r.prerelease);
+ const updated=update&&previous&&pick({...update,assets:[...update.assets,...previous.assets.filter(a=>/^Squared.*2\.0\.3\.zip$/i.test(a.name))]});
+ return raw.map(r=>r.tag_name==='v2.0.6-hotfix4'&&updated?{...r,assets:[...r.assets,...update.assets],engineUpdate:{tag:update.tag_name,version:'2026.10.11',url:updated.url,fallback:'https://github.com/'+repo+'/releases/tag/v2.0.3'}}:['v2.0.4','v2.0.5','v2.0.6','v2.0.6-hotfix','v2.0.6-hotfix2','v2.0.6-hotfix3','v2.0.6-hotfix4'].includes(r.tag_name)&&previous?{...r,assets:[...r.assets,...previous.assets.filter(a=>/Engine|Developers/i.test(a.name))]}:r);
 }
 let pending;
 async function load(){
