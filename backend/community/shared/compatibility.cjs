@@ -21,6 +21,19 @@ function walk(value,depth=0,key=''){
  }
 }
 function identifier(id){if(!idPattern.test(id||''))throw new Error('Invalid item section: '+String(id).slice(0,80));}
+// Keep import validation permissive so old projects can be opened and repaired.
+// Apply this at export boundaries, never to localization keys or texture paths.
+function spawnId(id){identifier(id);if(id.length>63)throw Error('Item section exceeds the engine save limit of 63 ASCII bytes: '+id);}
+function validateSpawnIds(db){
+ const seen=new Set();
+ for(const kind of ['rigs','boxes','pouches','packs','items'])for(const it of db[kind]||[]){
+  spawnId(it.id);if(seen.has(it.id))throw Error('Duplicate exported item section: '+it.id);seen.add(it.id);
+  if(it.parent)spawnId(it.parent);
+  for(const [id] of it.craft?.parts||[])spawnId(id);
+  for(const field of ['parts','yield'])for(const id of it[field]||[])spawnId(id);
+ }
+ return db;
+}
 function whole(n,min,max,label){if(!Number.isInteger(n)||n<min||n>max)throw new Error(label+' must be a whole number from '+min+' to '+max+'.');}
 function item(it,kind){
  if(!it || typeof it!=='object')throw new Error('Invalid item.');
@@ -68,7 +81,7 @@ function lua(value){
  return '{'+Object.entries(value).map(([k,v])=>'['+lua(k)+']='+lua(v)).join(',')+'}';
 }
 function compatibilityFiles(db){
- validate(db);
+ validate(db);validateSpawnIds(db);
  const removed=Object.fromEntries((db.removed||[]).map(x=>[x.id,true]));
  const rigs=db.rigs.filter(x=>!x.adopt||root.EMIT.owns(x,'drops')).map(x=>({id:x.id,tier:root.EMIT.tierOf(x.slots)}));
  const pouches=db.pouches.filter(x=>!stock.includes(x.id)&&(!x.adopt||root.EMIT.owns(x,'drops'))).map(x=>x.id);
@@ -136,5 +149,5 @@ async function modelFiles(db){
  }
  return Promise.all([...paths].map(async path=>{const response=await fetch('assets/models/'+path);if(!response.ok)throw new Error('Could not load model '+path+'. Retry when connected.');return {name:'gamedata/'+path,bytes:new Uint8Array(await response.arrayBuffer())};}));
 }
-root.ZB={validate,validateAddon,compatibilityFiles,modelFiles,models,installNotes:`ZONEBENCH EXPORT\nRequires Squared Away 2.0 or a compatible later build, its custom engine, and the selected item dependencies.\nInstall this ZIP as a separate MO2 mod after Squared Away and its patches. Enable only one ZoneBench export; combine item packs in one project.\nDeleted stock items are removed from distribution, but their definitions remain to keep existing references valid.\nDrop and condition values are MCM defaults; existing saved MCM choices take precedence.\nCustom model paths refer to assets you must install separately.\nBack up saves and test a disposable new game before using a custom add-on in a playthrough.\n`};
+root.ZB={spawnId,validateSpawnIds,validate,validateAddon,compatibilityFiles,modelFiles,models,installNotes:`ZONEBENCH EXPORT\nRequires Squared Away 2.0 or a compatible later build, its custom engine, and the selected item dependencies.\nInstall this ZIP as a separate MO2 mod after Squared Away and its patches. Enable only one ZoneBench export; combine item packs in one project.\nDeleted stock items are removed from distribution, but their definitions remain to keep existing references valid.\nDrop and condition values are MCM defaults; existing saved MCM choices take precedence.\nCustom model paths refer to assets you must install separately.\nBack up saves and test a disposable new game before using a custom add-on in a playthrough.\n`};
 })(globalThis);

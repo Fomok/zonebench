@@ -100,3 +100,33 @@ test('manual modpack references survive independent export and project validatio
  const p=a.AddonExport.plan(a.db,a.seed),all=p.files.map(text).join('\n');
  for(const id of ['zona_recipe_book','zona_custom_fabric','zona_custom_plate','zona_repair_fabric','zona_scrap','zona_light_armour'])assert(all.includes(id),id);
 });
+
+
+test('save-safe IDs losslessly preserve both UUIDs and remain stable offline',()=>{
+ const a=setup();a.AddonExport.ensure(a.db,a.seed);
+ a.db.independentAddon.id='72bb0903-c26b-4164-a77c-837ab2225358';a.r.addonItemId='335f43e0-d3e0-4391-a267-0a64f8c1cfe7';
+ const p=a.AddonExport.plan(a.db,a.seed),id=p.manifest.items[0].id;
+ assert.equal(Buffer.byteLength(id),55);assert.match(id,/^zb_r[0-9a-z]{25}_[0-9a-z]{25}$/);
+ const decode=s=>[...s].reduce((n,c)=>n*36n+BigInt(parseInt(c,36)),0n).toString(16).padStart(32,'0');
+ assert.equal(decode(id.slice(4,29)),'72bb0903c26b4164a77c837ab2225358');
+ assert.equal(decode(id.slice(30)),'335f43e0d3e04391a2670a64f8c1cfe7');
+ assert.equal(Object.values(p.manifest.sectionMigration)[0],id);assert.equal(p.manifest.exportRevision,2);
+ const old=Object.keys(p.manifest.sectionMigration)[0];
+ assert.equal(a.AddonExport.safeReference(old),id);
+ const previous=id;a.db.independentAddon.id='72bb0903-c26b-4164-a77c-837ab2225359';
+ assert.notEqual(a.AddonExport.plan(a.db,a.seed).manifest.items[0].id,previous);
+});
+test('old external addon recipe references are converted consistently',()=>{
+ const a=setup(),old='zb_72bb0903c26b4164a77c837ab2225358_p67a0e41c4b724773b54a7ebc03f4b4cd';
+ a.r.craft={kit:1,book:'recipe_basic_1',parts:[[old,1]]};a.r.parts=[old];a.r.yield=[old];
+ const p=a.AddonExport.plan(a.db,a.seed),all=p.files.map(text).join('\n');
+ assert(!all.includes(old));assert(all.includes(a.AddonExport.safeReference(old)));
+});
+test('export rejects overlong spawnable IDs and cross-category collisions but imports stay readable',()=>{
+ const a=setup(),long='a'.repeat(64);
+ assert.doesNotThrow(()=>a.ZB.validate({...a.db,rigs:[{...a.r,id:long}]}));
+ assert.throws(()=>a.ZB.validateSpawnIds({rigs:[{id:long}]}),/63 ASCII/);
+ assert.throws(()=>a.ZB.validateSpawnIds({rigs:[{id:'same'}],packs:[{id:'same'}]}),/Duplicate/);
+ assert.doesNotThrow(()=>a.ZB.validateSpawnIds({rigs:[{id:'a'.repeat(63)}]}));
+ a.r.craft={parts:[[long,1]]};assert.throws(()=>a.AddonExport.plan(a.db,a.seed),/63 ASCII/);
+});

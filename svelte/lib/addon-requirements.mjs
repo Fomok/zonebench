@@ -14,7 +14,7 @@ export function recipeRequirements(pack,downloads=[]){
  return [...requirements.values()];
 }
 export function downloadStatus(download,listings,checked){
- if(editorRelease.exportRevision>1&&(Number(download.exportRevision)||0)<editorRelease.exportRevision)return {label:'Re-download required · editor export updated',kind:'update'};
+ if(editorRelease.exportRevision>1&&(Number(download.exportRevision)||0)<editorRelease.exportRevision)return {label:'Re-export required - existing saves may need migration',kind:'update'};
  if(!checked)return {label:'Update status not checked',kind:'unknown'};
  const listing=listings.find(l=>l.id===download.listingId);
  if(!listing)return {label:'No longer publicly listed',kind:'unavailable'};

@@ -14,7 +14,15 @@ function ensure(db,seed){
  for(const r of custom(db,seed)){if(!uuid.test(r.addonItemId||'')||seen.has(r.addonItemId))r.addonItemId=freshId();seen.add(r.addonItemId);}
  return a;
 }
-function sectionId(a,r,kind='rigs'){return 'zb_'+a.id.replaceAll('-','')+'_'+categories[kind].code+r.addonItemId.replaceAll('-','');}
+// Lossless base-36 encoding preserves BOTH UUIDs, including their full entropy.
+// Fixed-width fields prevent ambiguous concatenation; 55 ASCII bytes including prefix.
+function compact(hex){return BigInt('0x'+hex).toString(36).padStart(25,'0');}
+function legacySectionId(a,r,kind='rigs'){return 'zb_'+a.id.replaceAll('-','')+'_'+categories[kind].code+r.addonItemId.replaceAll('-','');}
+function safeReference(id){const m=/^zb_([a-f0-9]{32})_([rbpk])([a-f0-9]{32})$/.exec(id);return m?'zb_'+m[2]+compact(m[1])+'_'+compact(m[3]):id;}
+function sectionId(a,r,kind='rigs'){
+ if(!uuid.test(a.id)||!uuid.test(r.addonItemId)||!categories[kind])throw Error('Invalid add-on item identity.');
+ return safeReference(legacySectionId(a,r,kind));
+}
 function upsert(text,id,key,value){if(EMIT.hasKey(text,id,key))return EMIT.setKey(text,id,key,value);return text.trimEnd()+'\r\n'+key+' = '+value+'\r\n';}
 function plan(db,seed){
  const a=ensure(db,seed),chosen=customEntries(db,seed).filter(e=>!a.excluded.includes(e.item.addonItemId));
@@ -22,8 +30,9 @@ function plan(db,seed){
  if(chosen.length>20)throw Error('Select at most 20 new items per add-on.');
  const map=Object.fromEntries(chosen.map(({kind,item})=>[item.id,sectionId(a,item,kind)]));
  if(Object.keys(map).length!==chosen.length)throw Error('Two selected items use the same source ID. Rename one before exporting.');
+ const migration=Object.fromEntries(chosen.map(({kind,item})=>[legacySectionId(a,item,kind),map[item.id]]));
  const allCustom=new Set(custom(db,seed).map(r=>r.id));
- const reference=id=>{if(allCustom.has(id)&&!map[id])throw Error('Select the custom item used by another item: '+id);return map[id]||id;};
+ const reference=id=>{if(allCustom.has(id)&&!map[id])throw Error('Select the custom item used by another item: '+id);return map[id]||safeReference(id);};
  const mini={rigs:[],boxes:[],pouches:[],packs:[],items:[],families:{},removed:[]};
  const families={...EMIT.readFamilies(seed.files['configs/items/amp_boxes.ltx']),...(db.families||{})};
  const entries=chosen.map(({kind,item:source})=>{
@@ -67,6 +76,9 @@ function plan(db,seed){
   mini[kind].push(r);return {kind,item:r};
  });
  ZB.validate(mini);
+ ZB.validateSpawnIds(mini);
+ const existing=new Set(Object.keys(categories).flatMap(k=>(seed[k]||[]).map(r=>r.id)));
+ for(const id of Object.values(map))if(existing.has(id))throw Error('Generated item ID collides with an existing item: '+id);
  for(const r of mini.rigs)if(EMIT.craftFields(r)>10)throw Error(r.name+': crafting supports at most four ingredients.');
  const items=entries.map(e=>e.item),suffix='zba_'+a.id.replaceAll('-',''),sheet='ui\\zonebench\\'+suffix;
  const packed=BUILD.itemSheetPlan({items},{});if(packed.overflow.length)throw Error('Selected icons do not fit on one texture sheet.');
@@ -120,13 +132,15 @@ function plan(db,seed){
  const pow=n=>2**Math.ceil(Math.log2(Math.max(4,n)));
  const width=pow(Math.max(...pictures.map(e=>(e.rect.x+e.rect.w)*50))),height=pow(Math.max(...pictures.map(e=>(e.rect.y+e.rect.h)*50)));
  const texture='gamedata/textures/ui/zonebench/'+suffix+'.dds';
- const manifest={format:'zonebench-independent-addon',version:1,exportRevision:globalThis.ZonebenchExportRevision||1,id:a.id,name:a.name,addonVersion:a.version,requires:'Squared Away 2.0.4',items:chosen.map(({kind,item:r},i)=>({sourceId:r.id,id:entries[i].item.id,name:entries[i].item.name,kind})),texture:{path:texture,width,height},files:[...files.map(f=>f.name),texture]};
+ const manifest={format:'zonebench-independent-addon',version:1,exportRevision:Math.max(2,globalThis.ZonebenchExportRevision||0),sectionIdFormat:2,sectionMigration:migration,id:a.id,name:a.name,addonVersion:a.version,requires:'Squared Away 2.0.4',items:chosen.map(({kind,item:r},i)=>({sourceId:r.id,id:entries[i].item.id,name:entries[i].item.name,kind})),texture:{path:texture,width,height},files:[...files.map(f=>f.name),texture]};
  const dependencies=new Map();for(const {item:r} of chosen)for(const [id] of r.craft?.parts||[]){const dep=r.recipeDependencies?.[id];if(dep?.id)dependencies.set(dep.id,{id:dep.id,name:String(dep.name||dep.id),version:String(dep.version||'')});}if(dependencies.size)manifest.requiredAddons=[...dependencies.values()];
  return {files,entries:pictures,width,height,texture,manifest};
 }
 async function build(db,seed){const p=plan(db,seed),canvas=document.createElement('canvas');canvas.width=p.width;canvas.height=p.height;const ctx=canvas.getContext('2d');
  for(const e of p.entries){const r=e.rect,img=await BUILD.fitPicture(e.icon,r.w*50,r.h*50,e.fit,false);ctx.putImageData(img,r.x*50,r.y*50);}
  p.files.push({name:p.texture,bytes:BUILD.ddsFrom(ctx.getImageData(0,0,p.width,p.height))});
+ p.files.push({name:'SECTION-MIGRATION.json',bytes:BUILD.utf8(JSON.stringify(p.manifest.sectionMigration,null,2))});
+ p.files.push({name:'SAVE-COMPATIBILITY.txt',bytes:BUILD.utf8('This export uses save-safe item section IDs. If replacing an older ZoneBench export, existing saves containing its old IDs need offline migration BEFORE loading. Re-downloading alone does not repair those saves. Keep the original save and add-on backup. SECTION-MIGRATION.json maps old sections to new sections. Do not keep the old add-on enabled alongside this replacement. Dependencies created by the old exporter must also be re-exported and migrated together. New playthroughs do not need save migration.\n')});
  p.files.push({name:'addon.json',bytes:BUILD.utf8(JSON.stringify(p.manifest,null,2))});
  if(p.manifest.requiredAddons?.length)p.files.push({name:'REQUIRED-ADDONS.txt',bytes:BUILD.utf8('Enable these add-ons alongside this item. Its crafting recipe uses their items.\n'+p.manifest.requiredAddons.map(x=>x.name+' ('+x.version+') - '+x.id).join('\n'))});
  p.files.push({name:'INSTALL.txt',bytes:BUILD.utf8('SQUARED AWAY INDEPENDENT ADD-ON\nInstall below Squared Away 2.0.4 in MO2. Multiple independent add-ons may be enabled together. Keep the Squared Away 2.0.3 engine.\nReplace this add-on to update it; keep its ID. Save your ZoneBench project before making another add-on.\nExports selected NEW rigs, containers, pouches and backpacks. Existing-item edits and global settings are excluded. Models are supplied by Squared Away. Custom model paths require their own assets.\nDo not remove an add-on while that save still contains its items.\n')});
@@ -150,6 +164,6 @@ function render(P,db,seed,save,legacy){
  const duplicate=node('button','Start a separate add-on ID');duplicate.className='tool';duplicate.onclick=async()=>{if(!confirm('Save your project first if you want to update this add-on later. Start a separate add-on using the current items and a new ID?'))return;a.id=freshId();await save();renderPane();};P.appendChild(duplicate);
  const old=node('details');old.appendChild(node('summary','Legacy full-project export'));old.appendChild(node('p','The older exporter replaces shared files and cannot be stacked with other full-project exports. It is not used for this test.'));const b=node('button','Open legacy exporter');b.className='tool';b.onclick=()=>{P.replaceChildren();legacy(P);};old.appendChild(b);P.appendChild(old);preview();
 }
-root.AddonExport={ensure,custom,plan,build,render,sectionId};
+root.AddonExport={ensure,custom,plan,build,render,sectionId,safeReference};
 })(globalThis);
 

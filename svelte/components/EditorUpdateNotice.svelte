@@ -15,7 +15,7 @@
 </script>
 {#if newBuild||visible}
 <aside class="editor-update-notice" role="status" aria-label="Editor update">
- <div><strong>{newBuild?'A website update is ready':release.title}</strong><p>{newBuild?'Refresh to load the latest editor files together. Your saved customizations will be kept.':release.message}</p>{#if !newBuild}<p class:important={release.requiresRedownload}>{release.requiresRedownload?'Re-download your add-ons and replace their installed ZIP contents: this update changes generated mod files.':'No add-on re-download is needed for this interface update.'}</p>{/if}{#if error}<p>{error}</p>{/if}</div>
+ <div><strong>{newBuild?'A website update is ready':release.title}</strong><p>{newBuild?'Refresh to load the latest editor files together. Your saved customizations will be kept.':release.message}</p>{#if !newBuild}<p class:important={release.requiresRedownload}>{release.requiresRedownload?release.downloadNotice||'Re-download your add-ons and replace their installed ZIP contents: this update changes generated mod files.':'No add-on re-download is needed for this interface update.'}</p>{/if}{#if error}<p>{error}</p>{/if}</div>
  {#if newBuild}<button onclick={refresh} disabled={refreshing}>{refreshing?'Saving…':'Refresh website'}</button>{:else}<button onclick={dismiss}>Got it</button>{/if}
 </aside>
 {/if}

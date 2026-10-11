@@ -7,6 +7,7 @@ const idPattern=/^[a-z][a-z0-9_]*$/;
 function plan(db,seed,kind,source){
  if(!kinds.includes(kind)||!source?.adopt)throw Error('Select an adapted item.');
  if(!idPattern.test(source.id||''))throw Error('Enter the exact existing item section ID.');
+ ZB.spawnId(source.id);
  if(kinds.flatMap(k=>db[k]||[]).filter(x=>x.id===source.id).length>1)throw Error('More than one project item uses this section ID.');
  const r=clone(source),own=r.own||{},mini={rigs:[],boxes:[],pouches:[],packs:[],items:[],families:{},removed:[]};
  if(!source.adaptationId)source.adaptationId=crypto.randomUUID();
@@ -21,6 +22,7 @@ function plan(db,seed,kind,source){
  const checkdb={...mini,[kind]:[check],families:db.families||{}};
  if(kind!=='items')AddonExport.plan(checkdb,{...seed,[kind]:(Array.isArray(seed[kind])?seed[kind]:[]).filter(item=>item.id!==check.id)});
  mini[kind].push(r);
+ ZB.validateSpawnIds(mini);
  let keys={};
  if(kind==='rigs'||kind==='pouches')keys=Object.fromEntries(EMIT.adoptKeys(r));
  if(kind==='boxes'){

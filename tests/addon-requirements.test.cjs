@@ -9,7 +9,8 @@ test('recipe requirements only include ingredients actually used and combine sha
 });
 test('download status distinguishes a newer listing, unavailable listing and failed checks',async()=>{
  const {downloadStatus,addonLink}=await import('../svelte/lib/addon-requirements.mjs');
- const saved={listingId:'one',revision:2};
+ const saved={listingId:'one',revision:2,exportRevision:2};
+ assert.match(downloadStatus({...saved,exportRevision:1},[],true).label,/migration/);
  assert.equal(downloadStatus(saved,[],false).kind,'unknown');
  assert.equal(downloadStatus(saved,[],true).kind,'unavailable');
  assert.equal(downloadStatus(saved,[{id:'one',revision:2}],true).kind,'current');
