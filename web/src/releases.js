@@ -13,7 +13,7 @@ function pick(release){
 }
 function compatible(raw){
  const previous=raw.find(r=>r.tag_name==='v2.0.3'&&!r.draft);
- return raw.map(r=>['v2.0.4','v2.0.5','v2.0.6','v2.0.6-hotfix','v2.0.6-hotfix2','v2.0.6-hotfix3'].includes(r.tag_name)&&previous?{...r,assets:[...r.assets,...previous.assets.filter(a=>/Engine|Developers/i.test(a.name))]}:r);
+ return raw.map(r=>['v2.0.4','v2.0.5','v2.0.6','v2.0.6-hotfix','v2.0.6-hotfix2','v2.0.6-hotfix3','v2.0.6-hotfix4'].includes(r.tag_name)&&previous?{...r,assets:[...r.assets,...previous.assets.filter(a=>/Engine|Developers/i.test(a.name))]}:r);
 }
 let pending;
 async function load(){

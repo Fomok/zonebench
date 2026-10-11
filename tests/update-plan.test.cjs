@@ -10,6 +10,6 @@ test('future changed engines are detected and prereleases skipped',async()=>{con
 test('published 2.0.6 hotfix preserves 2.0.6 and reuses engines',async()=>{
  const fs=require('node:fs'),vm=require('node:vm');const raw=JSON.parse(fs.readFileSync('web/data/releases.json','utf8'));
  const context=vm.createContext({URL,fetch:async()=>({ok:true,json:async()=>raw}),AbortSignal});vm.runInContext(fs.readFileSync('web/src/releases.js','utf8'),context);
- const {items}=await context.Releases.load();assert.equal(items[0].tag,'v2.0.6-hotfix3');assert(items.some(r=>r.tag==='v2.0.6'));const {updatePlan}=await import('../svelte/lib/update-plan.mjs');
- for(const installed of ['v2.0.4','v2.0.6','v2.0.6-hotfix','v2.0.6-hotfix2'])for(const variant of ['standard','bodycam']){const plan=updatePlan(items,installed,variant);assert(plan.modNeeded);assert(!plan.engineNeeded);assert.match(plan.engine.browser_download_url,/v2\.0\.3/);}
+ const {items}=await context.Releases.load();assert.equal(items[0].tag,'v2.0.6-hotfix4');assert(items.some(r=>r.tag==='v2.0.6'));const {updatePlan}=await import('../svelte/lib/update-plan.mjs');
+ for(const installed of ['v2.0.4','v2.0.6','v2.0.6-hotfix','v2.0.6-hotfix2','v2.0.6-hotfix3'])for(const variant of ['standard','bodycam']){const plan=updatePlan(items,installed,variant);assert(plan.modNeeded);assert(!plan.engineNeeded);assert.match(plan.engine.browser_download_url,/v2\.0\.3/);}
 });
