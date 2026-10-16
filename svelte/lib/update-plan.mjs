@@ -5,6 +5,7 @@ export function updatePlan(releases, installedTag, variant = 'standard', install
  const installed = stable.find(r => r.tag === installedTag);
  const key = variant === 'bodycam' ? 'bodycam' : 'engine';
  const engine = latest[key];
- const engineChanged = latest.engineUpdate ? installedEngine !== latest.engineUpdate.tag : !engine || !installed?.[key] || installed[key].browser_download_url !== engine.browser_download_url;
+ const update = variant === 'bodycam' ? (latest.bodycamUpdate || latest.engineUpdate) : latest.engineUpdate;
+ const engineChanged = update ? installedEngine !== update.tag : !engine || !installed?.[key] || installed[key].browser_download_url !== engine.browser_download_url;
  return { latest, installed, modNeeded: installed?.tag !== latest.tag, engineNeeded: engineChanged, engine, unknown: !installed, newGame: installedTag === 'legacy' || installedTag === '2026.9.12' };
 }

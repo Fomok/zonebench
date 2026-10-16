@@ -45,7 +45,7 @@ test('2.1.0 pairs with existing October engines and keeps earlier downloads',asy
  const raw=JSON.parse(fs.readFileSync('web/data/releases.json','utf8'));
  const old=raw.find(r=>r.tag_name==='v2.0.6-hotfix4');
  const fresh={...old,tag_name:'v2.1.0',name:'Squared Away 2.1.0 Minor Update',published_at:'2026-10-16T06:00:00Z',assets:[{...old.assets[0],name:'Squared Away 2.1.0 Minor Update.zip',browser_download_url:'https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/v2.1.0/Squared.Away.2.1.0.Minor.Update.zip'}]};
- const ctx=vm.createContext({URL,AbortSignal,fetch:async()=>({ok:true,json:async()=>[fresh,...raw.filter(r=>r.tag_name!=='v2.1.0')]})});
+ const ctx=vm.createContext({URL,AbortSignal,fetch:async()=>({ok:true,json:async()=>[fresh,...raw.filter(r=>r.tag_name!=='v2.1.0'&&r.tag_name!=='bodycam-0.3-2026.10.16')]})});
  vm.runInContext(fs.readFileSync('web/src/releases.js','utf8'),ctx);
  const result=await ctx.Releases.load();assert.equal(result.items[0].tag,'v2.1.0');assert(result.items[0].engine.browser_download_url.includes('engine-2026.10.11'));assert(result.items[0].bodycam);assert(result.items.some(r=>r.tag==='v2.0.6-hotfix4'));
  const {updatePlan}=await import('../svelte/lib/update-plan.mjs');

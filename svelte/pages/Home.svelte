@@ -16,7 +16,7 @@
  </section>
  <section class="kit-surface kit-release" aria-label="Latest release"><HeaderTexture kind="version"/>
   {#await releases}<p class="hint">Checking the latest release…</p>{:then data}{#if data.items[0]}{@const release=data.items[0]}
-   <span class="kit-label">{release.preview?'LATEST PREVIEW':'LATEST RELEASE'}</span><h2>{release.name}</h2>{#if release.engineUpdate}<p class="hint">Engine {release.engineUpdate.version} is now available. It may still have issues: <a href="#patch-notes">read the update notice and fallback instructions</a>.</p>{/if}
+   <span class="kit-label">{release.preview?'LATEST PREVIEW':'LATEST RELEASE'}</span><h2>{release.name}</h2>
    <div class="site-actions"><a class="tool" href={release.mod.browser_download_url}><HeaderTexture/><span class="kit-button-label">↓ Mod ZIP</span></a><a class="tool" href={release.engine.browser_download_url}><HeaderTexture/><span class="kit-button-label">↓ Engine ZIP</span></a><a class="kit-release-more" href="#downloads">All downloads & details →</a></div>
   {:else}<a href="#downloads">View downloads</a>{/if}{:catch error}<p role="alert">{error.message} <a href="#downloads">View downloads</a></p>{/await}
  </section>
