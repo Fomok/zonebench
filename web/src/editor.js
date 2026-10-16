@@ -283,6 +283,25 @@ function verNewer(a, b){
    one. Three callers - the stored copy at boot, a file you open, and
    nothing else - and they were three copies of this until the store
    made it three. */
+function upgradeBaselineItems(db, seed) {
+  if (db.modVersion === seed.modVersion) return;
+  for (const kind of ["rigs", "boxes", "pouches"]) {
+    for (const previous of seed.previousDefaults?.[kind] || []) {
+      const item = (db[kind] || []).find(x => x.id === previous.id);
+      const current = (seed[kind] || []).find(x => x.id === previous.id);
+      if (!item || !current || item.new || item.adopt) continue;
+      for (const [field, oldValue] of Object.entries(previous.fields)) {
+        if (JSON.stringify(item[field]) === JSON.stringify(oldValue))
+          item[field] = JSON.parse(JSON.stringify(current[field]));
+      }
+    }
+    for (const id of seed.introducedItems?.[kind] || []) {
+      if ((db[kind] || []).some(x => x.id === id) || (db.removed || []).some(x => x.id === id)) continue;
+      const current = seed[kind].find(x => x.id === id);
+      if (current) (db[kind] ||= []).push(JSON.parse(JSON.stringify(current)));
+    }
+  }
+}
 function adoptSave(d, say){
   ZB.validate(d);
   CommunityUpdates.invalidate();
@@ -297,6 +316,7 @@ function adoptSave(d, say){
      That is the exact trap the magazine-rounds fix walked into.
      So: the newer of the two wins, and it says which. */
   const mine = SEED.modVersion, theirs = DB.modVersion;
+  upgradeBaselineItems(DB, SEED);
   if(true){
     if(DB.files && DB.filesFromZip && say && theirs !== mine)
       say("this page has Squared Away " + mine + "; the copy it remembered was "

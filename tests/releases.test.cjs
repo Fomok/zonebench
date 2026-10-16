@@ -46,7 +46,7 @@ test('2.0.4 reuses the explicitly compatible 2.0.3 engines',async()=>{
 });
 
 test('engine-only release uses the latest mod and safely falls back when unavailable',async()=>{
- const raw=JSON.parse(fs.readFileSync('web/data/releases.json','utf8'));
+ const raw=JSON.parse(fs.readFileSync('web/data/releases.json','utf8')).filter(r=>r.tag_name!=='v2.1.0'); // Historical engine-only release scenario.
  async function read(rows){const ctx=vm.createContext({URL,AbortSignal,fetch:async()=>({ok:true,json:async()=>rows})});vm.runInContext(fs.readFileSync('web/src/releases.js','utf8'),ctx);return (await ctx.Releases.load()).items;}
  const items=await read(raw);assert.equal(items[0].tag,'v2.0.6-hotfix4');assert.match(items[0].mod.browser_download_url,/v2\.0\.6-hotfix4/);assert.equal(items[0].engineUpdate.version,'2026.10.11');assert.match(items[0].bodycam.browser_download_url,/engine-2026\.10\.11/);
  for(const mode of ['draft','missing','unsafe']){const rows=structuredClone(raw),r=rows.find(r=>r.tag_name==='engine-2026.10.11');if(mode==='draft')r.draft=true;if(mode==='missing')r.assets=[];if(mode==='unsafe')r.assets.forEach(a=>a.browser_download_url='https://example.com/file.zip');const fallback=(await read(rows))[0];assert.match(fallback.engine.browser_download_url,/v2\.0\.3/);assert.equal(fallback.engineUpdate,null);}

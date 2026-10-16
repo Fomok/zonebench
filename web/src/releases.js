@@ -15,7 +15,7 @@ function compatible(raw){
  const previous=raw.find(r=>r.tag_name==='v2.0.3'&&!r.draft);
  const update=raw.find(r=>r.tag_name==='engine-2026.10.11'&&!r.draft&&!r.prerelease);
  const updated=update&&previous&&pick({...update,assets:[...update.assets,...previous.assets.filter(a=>/^Squared.*2\.0\.3\.zip$/i.test(a.name))]});
- return raw.map(r=>r.tag_name==='v2.0.6-hotfix4'&&updated?{...r,assets:[...r.assets,...update.assets],engineUpdate:{tag:update.tag_name,version:'2026.10.11',url:updated.url,fallback:'https://github.com/'+repo+'/releases/tag/v2.0.3'}}:['v2.0.4','v2.0.5','v2.0.6','v2.0.6-hotfix','v2.0.6-hotfix2','v2.0.6-hotfix3','v2.0.6-hotfix4'].includes(r.tag_name)&&previous?{...r,assets:[...r.assets,...previous.assets.filter(a=>/Engine|Developers/i.test(a.name))]}:r);
+ return raw.map(r=>['v2.1.0','v2.0.6-hotfix4'].includes(r.tag_name)&&updated?{...r,assets:[...r.assets,...update.assets],engineUpdate:{tag:update.tag_name,version:'2026.10.11',url:updated.url,fallback:'https://github.com/'+repo+'/releases/tag/v2.0.3'}}:['v2.1.0','v2.0.4','v2.0.5','v2.0.6','v2.0.6-hotfix','v2.0.6-hotfix2','v2.0.6-hotfix3','v2.0.6-hotfix4'].includes(r.tag_name)&&previous?{...r,assets:[...r.assets,...previous.assets.filter(a=>/Engine|Developers/i.test(a.name))]}:r);
 }
 let pending;
 async function load(){

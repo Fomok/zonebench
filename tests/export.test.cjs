@@ -5,7 +5,7 @@ for(const name of ['src/emit.js','src/archive.js','data/baseline.js','src/compat
 const seed=()=>vm.runInContext('JSON.parse(JSON.stringify(SEED))',context);
 const {ZB,EMIT,BUILD}=context;
 test('current baseline validates and has no inventory script or UI templates',()=>{
- const db=seed();ZB.validate(db);assert.equal(db.modVersion,'2.0.6');assert.equal(Object.keys(db.files).filter(x=>x.startsWith('scripts/')||x.startsWith('configs/ui/')).length,0);
+ const db=seed();ZB.validate(db);assert.equal(db.modVersion,'2.1.0');assert.equal(Object.keys(db.files).filter(x=>x.startsWith('scripts/')||x.startsWith('configs/ui/')).length,0);
 });
 test('new rigs receive the dedicated engine slot without replacing runtime',()=>{
  const db=seed();const r=JSON.parse(JSON.stringify(db.rigs[0]));r.id='amprig_test';r.new=true;db.rigs.push(r);
@@ -34,7 +34,7 @@ test('site has no whole-runtime export path',()=>{const source=fs.readFileSync(p
 // Audited source hashes catch stale templates or model files in a future baseline update.
 test('2.0 baseline matches audited templates and shared model assets',()=>{
  const crypto=require('node:crypto');const manifest=JSON.parse(fs.readFileSync(path.join(root,'data/baseline-manifest.json'),'utf8'));const db=seed();
- assert.equal(db.baseline,'squared-away-2.0.4');assert.equal(db.baseline,manifest.baseline);assert.equal(db.engineCommit,manifest.engineCommit);
+ assert.equal(db.baseline,'squared-away-2.1.0');assert.equal(db.baseline,manifest.baseline);assert.equal(db.engineCommit,manifest.engineCommit);
  assert.deepEqual(Object.keys(db.files).sort(),Object.keys(manifest.templates).sort());
  for(const [name,hash] of Object.entries(manifest.templates))assert.equal(crypto.createHash('sha256').update(db.files[name]).digest('hex'),hash,name);
  for(const [name,hash] of Object.entries(manifest.models))assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'assets/models',name))).digest('hex'),hash,name);
