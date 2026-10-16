@@ -30,6 +30,17 @@ test('baseline upgrades honor deliberately removed items',()=>{
  const id=seed.introducedItems.boxes[0],db={modVersion:'2.0.6',rigs:[],boxes:[],pouches:[],removed:[{kind:'boxes',id}]};
  c.upgradeBaselineItems(db,seed);assert(!db.boxes.some(i=>i.id===id));
 });
+
+test('same-version corrections update untouched defaults once and preserve personal edits',()=>{
+ const db=JSON.parse(JSON.stringify(seed));delete db.defaultsRevision;
+ for(const kind of ['boxes','pouches'])for(const prior of seed.correctedDefaults[kind])Object.assign(db[kind].find(i=>i.id===prior.id),prior.fields);
+ const custom=db.pouches.find(i=>i.id===seed.introducedItems.pouches[0]);custom.cost=5555;
+ c.upgradeBaselineItems(db,seed);
+ assert.equal(custom.cost,5555);assert.equal(custom.tier,3);
+ for(const kind of ['boxes','pouches'])for(const id of seed.introducedItems[kind])assert.equal(db[kind].find(i=>i.id===id).descr,seed[kind].find(i=>i.id===id).descr);
+ custom.tier=4;c.upgradeBaselineItems(db,seed);assert.equal(custom.tier,4);
+ assert.equal(db.defaultsRevision,seed.defaultsRevision);
+});
 test('2.1.0 pairs with existing October engines and keeps earlier downloads',async()=>{
  const raw=JSON.parse(fs.readFileSync('web/data/releases.json','utf8'));
  const old=raw.find(r=>r.tag_name==='v2.0.6-hotfix4');

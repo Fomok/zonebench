@@ -4,6 +4,22 @@ const context=vm.createContext({console,TextEncoder,TextDecoder,Uint8Array,Uint3
 for(const name of ['src/emit.js','src/archive.js','data/baseline.js','src/compatibility.js'])vm.runInContext(fs.readFileSync(path.join(root,name),'utf8'),context,{filename:name});
 const seed=()=>vm.runInContext('JSON.parse(JSON.stringify(SEED))',context);
 const {ZB,EMIT,BUILD}=context;
+test('corrected new-item translations survive exports and boxes retain chosen stack limits',()=>{
+ const db=seed(),base=EMIT.baseStrings(db.files['configs/text/eng/zzz_amp_text.xml']);
+ for(const lang of ['eng','rus','ukr','spa']){
+  const original=db.files['configs/text/'+lang+'/zzz_amp_text.xml'];
+  const result=EMIT.textFile(db,original,base,[]);
+  for(const kind of ['boxes','pouches'])for(const id of db.introducedItems[kind])for(const suffix of ['name','descr']){
+   const key='st_'+id+'_'+suffix;assert.equal(EMIT.getString(result,key),EMIT.getString(original,key));
+  }
+ }
+ for(const limit of [1,7,999]){
+  db.boxes[0].stack=limit;
+  const text=EMIT.boxSystem(db,db.files['configs/mod_system_amp_boxes.ltx'],{});
+  const block=text.split('['+db.boxes[0].id+']')[1].split('\n[')[0];
+  assert.match(block,new RegExp('amp_box_stack\\s*=\\s*'+limit+'(?:\\s|$)'));
+ }
+});
 test('current baseline validates and has no inventory script or UI templates',()=>{
  const db=seed();ZB.validate(db);assert.equal(db.modVersion,'2.1.0');assert.equal(Object.keys(db.files).filter(x=>x.startsWith('scripts/')||x.startsWith('configs/ui/')).length,0);
 });

@@ -284,6 +284,20 @@ function verNewer(a, b){
    nothing else - and they were three copies of this until the store
    made it three. */
 function upgradeBaselineItems(db, seed) {
+  if (db.defaultsRevision !== seed.defaultsRevision) {
+    for (const kind of ["rigs", "boxes", "pouches"]) {
+      for (const previous of seed.correctedDefaults?.[kind] || []) {
+        const item = (db[kind] || []).find(x => x.id === previous.id);
+        const current = (seed[kind] || []).find(x => x.id === previous.id);
+        if (!item || !current || item.new || item.adopt) continue;
+        for (const [field, value] of Object.entries(previous.fields)) {
+          if (JSON.stringify(item[field]) === JSON.stringify(value))
+            item[field] = JSON.parse(JSON.stringify(current[field]));
+        }
+      }
+    }
+    db.defaultsRevision = seed.defaultsRevision;
+  }
   if (db.modVersion === seed.modVersion) return;
   for (const kind of ["rigs", "boxes", "pouches"]) {
     for (const previous of seed.previousDefaults?.[kind] || []) {
@@ -2621,7 +2635,7 @@ function drawBox(P,it){
   const gk=el("div","grid2");
   const kgIn = num(it,"kg",{min:0,step:0.5,disabled:it.kg==null});
   field(gk,"Weight it carries","kg",kgIn);
-  field(gk,"Stack ceiling","per square",num(it,"stack",{min:1,max:999,int:true}));
+  field(gk,"Items per stack","Inside this box · 1 disables stacking",num(it,"stack",{min:1,max:999,int:true}));
   left.appendChild(gk);
   const nolimit=el("label","tick");
   nolimit.innerHTML='<input type="checkbox"'+(it.kg==null?" checked":"")

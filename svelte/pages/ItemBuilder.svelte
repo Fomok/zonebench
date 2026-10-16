@@ -48,6 +48,8 @@
  <div class="two-fields"><label>Storage width<input type="number" min="1" max="20" value={item.inw} onchange={e=>number(e,'inw',1,20)}/></label><label>Storage height<input type="number" min="1" max="20" value={item.inh} onchange={e=>number(e,'inh',1,20)}/></label></div>
  <label>Allowed items<select value={item.takes} onchange={e=>{item.takes=e.currentTarget.value;save();}}><option value="any">Any item</option>{#each rules as rule}<option value={rule.id}>{rule.name}</option>{/each}</select></label>
  <label>Weight limit (kg)<input type="number" min="0" step="0.1" value={item.kg} onchange={e=>number(e,'kg')}/></label>
+ <label>Items per stack<input type="number" min="1" max="999" step="1" value={item.stack||1} onchange={e=>{item.stack=Math.max(1,Math.min(999,Math.floor(Number(e.currentTarget.value)||1)));save();}}/></label>
+ <p class="builder-notice">Maximum items in each stack inside this container. Set 1 to disable stacking. This does not change stacking outside the container.</p>
  <p class="builder-notice">For separate compartments or custom item rules, use the advanced editor below.</p>
  {:else if kind==='pouches'}
  <PouchStorage {item} changed={save}/>
