@@ -9,7 +9,7 @@ function pick(release){
  const safe=a=>{try{const u=new URL(a.browser_download_url);return u.protocol==='https:'&&u.hostname==='github.com'&&u.pathname.startsWith('/'+repo+'/releases/download/');}catch{return false;}};
  if(!safe(mod[0])||!safe(engine[0]))return null;
  const bodycam=release.assets.filter(a=>/bodycam/i.test(a.name)&&/engine/i.test(a.name)&&/\.zip$/i.test(a.name)&&safe(a));
- return {tag:release.tag_name,name:release.name||release.tag_name,preview:!!release.prerelease,date:release.published_at,notes:release.body||'',url:'https://github.com/'+repo+'/releases/tag/'+encodeURIComponent(release.tag_name),mod:mod[0],engine:engine[0],engineUpdate:release.engineUpdate||null,bodycamUpdate:release.bodycamUpdate||null,bodycam:bodycam.length===1?bodycam[0]:null};
+ return {tag:release.tag_name,name:release.name||release.tag_name,preview:!!release.prerelease,date:release.published_at,notes:release.body||'',url:'https://github.com/'+repo+'/releases/tag/'+encodeURIComponent(release.tag_name),mod:mod[0],engine:engine[0],engineUpdate:release.engineUpdate||null,bodycamUpdate:release.bodycamUpdate||null,bodycam:bodycam.length===1?bodycam[0]:null,stashGrid:release.tag_name==='v2.1.0'?release.assets.find(a=>/^Squared[ .]Away[ .]Stash[ .]Grid[ .]Optional[ .]Test\.zip$/.test(a.name)&&safe(a))||null:null};
 }
 function compatible(raw){
  const previous=raw.find(r=>r.tag_name==='v2.0.3'&&!r.draft);
