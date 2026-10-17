@@ -1,5 +1,6 @@
 <script>
 
+ import BodycamDlss from '../components/BodycamDlss.svelte';
  import {updatePlan} from '../lib/update-plan.mjs';
  const result=window.Releases.load();
  let installed=$state(''),variant=$state('standard'),installedEngine=$state('previous');
@@ -19,6 +20,7 @@
 
    {#if engineUpdate}<label>Installed engine version<select bind:value={installedEngine}><option value="previous">Older engine / I’m not sure</option><option value={engineUpdate.tag}>{engineUpdate.version}</option></select></label>{/if}
    </section>
+   <BodycamDlss download={data.items[0].bodycamDlss}/>
    {@const plan=updatePlan(data.items,installed,variant,installedEngine)}
    {#if plan}
     <section class="release-panel" aria-live="polite">
