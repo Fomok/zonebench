@@ -68,7 +68,7 @@
         "state": "uploaded",
         "size": 83897,
         "digest": "sha256:8eac23502adb928ad31bf2b4f3a1fb4f3abed0c5d716219e915b10b95a28bcaa",
-        "download_count": 0,
+        "download_count": 3,
         "created_at": "2026-10-17T23:08:03Z",
         "updated_at": "2026-10-17T23:08:03Z",
         "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/bodycam-dlss-2026.10.18/Bodycam.DLSS.Grass.Motion.Shader.Patch.zip"
@@ -104,7 +104,7 @@
         "state": "uploaded",
         "size": 509751,
         "digest": "sha256:7c8b97ab96d784f661f90cb211076e2014524853aabd2cb503826de90007a4bc",
-        "download_count": 0,
+        "download_count": 2,
         "created_at": "2026-10-17T23:08:03Z",
         "updated_at": "2026-10-17T23:08:04Z",
         "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/bodycam-dlss-2026.10.18/Bodycam.GAMMA.Patch.1.1.0.zip"
@@ -140,7 +140,7 @@
         "state": "uploaded",
         "size": 110730880,
         "digest": "sha256:0f993dbd69dd13409c2adb0dba0a3caa56c81356a8157c5925d77c9bd9b52ed0",
-        "download_count": 0,
+        "download_count": 5,
         "created_at": "2026-10-17T23:07:44Z",
         "updated_at": "2026-10-17T23:08:02Z",
         "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/bodycam-dlss-2026.10.18/Squared.Away.Engine.Bodycam.DLSS.DX11.AVX.zip"
@@ -255,7 +255,7 @@
         "state": "uploaded",
         "size": 77415006,
         "digest": "sha256:0808bd8d7a8278ea562e863a49c89e8ac73a20761451ba90f6e614d54d5f95c9",
-        "download_count": 15,
+        "download_count": 16,
         "created_at": "2026-10-16T18:54:09Z",
         "updated_at": "2026-10-16T18:54:22Z",
         "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/bodycam-0.3-2026.10.16/Squared.Away.Engine.Bodycam.0.3.DX11.AVX.zip"
@@ -334,7 +334,7 @@
         "state": "uploaded",
         "size": 550760260,
         "digest": "sha256:c9c657003022b48e13168e33fad1e924a61ab2c1104a5a8fe7c0ffb3f4e16504",
-        "download_count": 267,
+        "download_count": 271,
         "created_at": "2026-10-11T15:15:53Z",
         "updated_at": "2026-10-11T15:17:21Z",
         "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/engine-2026.10.11/Squared.Away.Engine.2026.10.11.All.DX.zip"
@@ -415,7 +415,7 @@
     "immutable": false,
     "prerelease": false,
     "created_at": "2026-10-05T10:07:37Z",
-    "updated_at": "2026-10-16T22:11:29Z",
+    "updated_at": "2026-10-17T23:50:47Z",
     "published_at": "2026-10-16T04:13:06Z",
     "assets": [
       {
@@ -449,10 +449,46 @@
         "state": "uploaded",
         "size": 18082456,
         "digest": "sha256:39c87d1548d002b330854ecaf354cd182a3415fb79741bd6126f629c5db690c9",
-        "download_count": 103,
+        "download_count": 108,
         "created_at": "2026-10-16T04:23:01Z",
         "updated_at": "2026-10-16T04:23:06Z",
         "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/v2.1.0/Squared.Away.2.1.0.Minor.Update.zip"
+      },
+      {
+        "url": "https://api.github.com/repos/Fomok/xray-monolith-inventory-edits/releases/assets/651926704",
+        "id": 651926704,
+        "node_id": "RA_kwDOUNTgSs4m25yw",
+        "name": "Squared.Away.Stash.Grid.Optional.Test.2.zip",
+        "label": "",
+        "uploader": {
+          "login": "Fomok",
+          "id": 60652038,
+          "node_id": "MDQ6VXNlcjYwNjUyMDM4",
+          "avatar_url": "https://avatars.githubusercontent.com/u/60652038?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Fomok",
+          "html_url": "https://github.com/Fomok",
+          "followers_url": "https://api.github.com/users/Fomok/followers",
+          "following_url": "https://api.github.com/users/Fomok/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Fomok/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Fomok/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Fomok/subscriptions",
+          "organizations_url": "https://api.github.com/users/Fomok/orgs",
+          "repos_url": "https://api.github.com/users/Fomok/repos",
+          "events_url": "https://api.github.com/users/Fomok/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Fomok/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "content_type": "application/zip",
+        "state": "uploaded",
+        "size": 161801,
+        "digest": "sha256:3c32f976df479665bfb6373ca229a4d3d35db3f74a174205b4d6b861f52f3b3f",
+        "download_count": 0,
+        "created_at": "2026-10-17T23:50:46Z",
+        "updated_at": "2026-10-17T23:50:47Z",
+        "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/v2.1.0/Squared.Away.Stash.Grid.Optional.Test.2.zip"
       },
       {
         "url": "https://api.github.com/repos/Fomok/xray-monolith-inventory-edits/releases/assets/648773951",
@@ -485,7 +521,7 @@
         "state": "uploaded",
         "size": 160718,
         "digest": "sha256:4e909d0c84f0847c3b71df78a9788af93363a3105d3bea84eb6bc1ab245cd391",
-        "download_count": 11,
+        "download_count": 13,
         "created_at": "2026-10-16T22:11:28Z",
         "updated_at": "2026-10-16T22:11:28Z",
         "browser_download_url": "https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/v2.1.0/Squared.Away.Stash.Grid.Optional.Test.zip"
@@ -493,7 +529,7 @@
     ],
     "tarball_url": "https://api.github.com/repos/Fomok/xray-monolith-inventory-edits/tarball/v2.1.0",
     "zipball_url": "https://api.github.com/repos/Fomok/xray-monolith-inventory-edits/zipball/v2.1.0",
-    "body": "# 2.1.0 Minor Update\n\n### New items\n\n- Artifacts Bag\n- Small Artifact Bag\n- Tall Mag Pouch \u2014 adds one tall magazine slot\n- Advanced Tall Mag Pouch \u2014 adds two tall magazine slots\n\n### Texture edits\n\n- Patrontash\n- Razvedka Sling\n- Hip Pouch\n- Pistol Case\n- Field Medical Case\n\n### Texture repositions\n\n- Barakholka Rig\n- 6Sh92 Surplus Rig\n- Tarzan-M22\n- Shturm Carrier\n- Rubezh Carrier\n\nInstall the full ZIP with your usual compatibility options. Includes all earlier 2.0.6 hotfixes. **No engine update or new game required when updating from 2.0.x.**\n\n[Downloads and installation](https://fomok.github.io/zonebench/#downloads)\n\n## Optional stash grid test\n\nFixed-capacity stash grids with a **Sort stash** button. Optional download for further testing; the main mod stays unchanged.\n\n**Empty your stashes BEFORE installing.** Install below Squared Away 2.1.0 and its compatibility patches in MO2. Disable older stash grid tests and keep a backup save. Keep your current Squared Away engine.\n\nTested by Fomok: saving/loading, changing areas and returning, and loot spawning in task-reward stashes. Please report problems in the [Discord thread](https://discord.com/channels/912320241713958912/1542887991222206484).\n"
+    "body": "# 2.1.0 Minor Update\n\n### New items\n\n- Artifacts Bag\n- Small Artifact Bag\n- Tall Mag Pouch \u2014 adds one tall magazine slot\n- Advanced Tall Mag Pouch \u2014 adds two tall magazine slots\n\n### Texture edits\n\n- Patrontash\n- Razvedka Sling\n- Hip Pouch\n- Pistol Case\n- Field Medical Case\n\n### Texture repositions\n\n- Barakholka Rig\n- 6Sh92 Surplus Rig\n- Tarzan-M22\n- Shturm Carrier\n- Rubezh Carrier\n\nInstall the full ZIP with your usual compatibility options. Includes all earlier 2.0.6 hotfixes. **No engine update or new game required when updating from 2.0.x.**\n\n[Downloads and installation](https://fomok.github.io/zonebench/#downloads)\n\n## Optional stash grid test 2\n\nFixed-capacity stash grids with a **Sort stash** button. Test 2 fixes task-stash markers staying on the map after looting. The fix has been tested in-game by Fomok.\n\nDownload **Squared.Away.Stash.Grid.Optional.Test.2.zip**. Install below Squared Away 2.1.0 and its compatibility patches in MO2. Replace/disable the previous stash-grid test and keep a backup save. Existing grid layouts can stay. Keep your current engine; no new game is needed.\n\n**First-time stash-grid users: empty your stashes BEFORE enabling this optional test.** For a marker already stuck on an empty stash, put one item in and take it back out.\n\nSaving/loading, area transitions and task-stash loot spawning were tested in the previous version. This remains an optional test; report issues in the [Discord thread](https://discord.com/channels/912320241713958912/1542887991222206484).\n"
   },
   {
     "url": "https://api.github.com/repos/Fomok/xray-monolith-inventory-edits/releases/409634416",
