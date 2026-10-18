@@ -24,8 +24,9 @@ function plan(db,seed,kind,source){
  mini[kind].push(r);
  ZB.validateSpawnIds(mini);
  let keys={};
- if(kind==='rigs'||kind==='pouches')keys=Object.fromEntries(EMIT.adoptKeys(r));
- if(kind==='boxes'){
+ if(kind==='rigs'||kind==='pouches')keys=Object.fromEntries(EMIT.adoptKeys(r).filter(([key])=>!r.patchOnly||(key.startsWith('amp_')?own.storage:!key.startsWith('use1_'))));
+ if(r.patchOnly&&own.storage&&kind==='rigs'&&!r.pins?.length)keys.amp_layout='';
+ if(kind==='boxes'&&(!r.patchOnly||own.storage)){
   keys={amp_box:true,amp_box_takes:r.takes||'any',amp_box_snd:r.snd||'chest',amp_box_w:r.inw,amp_box_h:r.inh,amp_box_stack:r.stack||1,amp_box_cells:false,amp_box_slots:'',amp_box_noweight:r.kg==null,amp_box_kg:r.kg==null?0:r.kg};
   if(r.slots?.length)keys.amp_box_slots=r.slots.map(x=>[x.c,x.r,x.w,x.h].join(',')).join(' | ');
   const family={...EMIT.readFamilies(seed.files['configs/items/amp_boxes.ltx']),...(db.families||{})}[r.takes];
@@ -33,7 +34,7 @@ function plan(db,seed,kind,source){
   else if(family){keys.amp_box_takes=suffix+'_rules';mini.families[keys.amp_box_takes]=clone(family);put('configs/items/mod_amp_boxes_'+suffix+'.ltx',EMIT.boxRules(mini,''));}
   else throw Error('Unknown container rule: '+r.takes);
  }
- if(['rigs','boxes','pouches'].includes(kind)){
+ if(!r.patchOnly&&['rigs','boxes','pouches'].includes(kind)){
   Object.assign(keys,{class:kind==='pouches'?'II_ATTCH':'II_CONTR',belt:false,dont_stack:true,amp_rig:kind==='rigs',amp_box:kind==='boxes',amp_pouch:kind==='pouches',slot:kind==='rigs'?15:-1,restore_slot_from_config:true});
   if(kind==='rigs'&&!r.pins?.length)keys.amp_layout='';
   const use='zzz_armor_mag_pouches.'+(kind==='pouches'?'pouch_no_install':'rig_no_install');keys.use1_functor=use;keys.use1_action_functor=use;

@@ -83,3 +83,9 @@ test('saving a mod edit adds it to optional library with original ID and removin
  const uuid=item.modOverrideId;library.open(library.entries('mod')[0],'mod');library.saveModItem();assert.equal(item.modOverrideId,uuid);assert.equal(db.rigs.length,1);
  library.removeEntry(library.entries('addons')[0]);assert.equal(db.rigs[0].name,'Base rig');assert.equal(library.entries('addons').length,0);
 });
+
+test('importing a patch never silently renames the original item section',async()=>{
+ const {db,library}=setup(),before=JSON.stringify(db);
+ const result={listing:{id:'patch',name:'Patch',version:'1',revision:1},pack:{items:[{kind:'rigs',item:{id:'base',name:'Rebalanced',adopt:true,patchOnly:true,own:{price:true},cost:123}}]}};
+ await assert.rejects(library.importPack(result,'rigs','base',false),/review replacing/);assert.equal(JSON.stringify(db),before);
+});

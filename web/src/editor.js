@@ -4066,17 +4066,11 @@ function doBuild(say){
    pictures - and the far end ticks again on the way in. Nothing of
    theirs is replaced without being asked about.
    ========================================================== */
-const SHARE_KINDS = [["rigs", "Rigs"], ["pouches", "Pouches"], ["boxes", "Containers"]];
+const SHARE_KINDS = [["rigs", "Rigs"], ["pouches", "Pouches"], ["boxes", "Containers"], ["packs", "Backpacks"], ["items", "Other items"]];
 
-/* Everything that is yours to send: made here, or adopted here. The
-   shipped rigs are not - the other person has those already, and
-   sending them would only overwrite theirs with yours. */
+/* Publish creations, saved mod edits and saved adaptations across every item type. */
 function mineToShare() {
-  const out = [];
-  SHARE_KINDS.forEach(([k]) => (DB[k] || []).forEach(x => {
-    if (x.new || x.adopt) out.push({ kind: k, it: x });
-  }));
-  return out;
+  return CommunityDownload.candidates(DB,SEED).map(({kind,item})=>({kind,it:item}));
 }
 let SHARE_PICK = null;     // what to send
 let INCOMING = null;       // what somebody sent, and what to take of it
@@ -4093,7 +4087,7 @@ function drawShare(P) {
   const count=selected().length;
   section.appendChild(el('p',count>20?'warn':'hint',count+' selected / 20 per public add-on'));
   if(!mine.length){
-    section.appendChild(el('p','hint','Create a rig, container or pouch first. Your custom and adopted items will appear here.'));
+    section.appendChild(el('p','hint','Create an item, or save a mod edit or adaptation to its library first.'));
     communityButton(section,'Create an item',async()=>Site.go('create'));
     communityButton(section,'Edit add-on items',async()=>EditorLibrary.choose('addons')); 
   }else{
@@ -4108,7 +4102,7 @@ function drawShare(P) {
       check.onchange=()=>{if(check.checked)SHARE_PICK.add(key);else SHARE_PICK.delete(key);renderPane();};
       label.appendChild(check);label.appendChild(AddonPreview.picture({kind,item:it}));
       const name=document.createElement('strong');name.textContent=it.name||it.id;label.appendChild(name);
-      const type=el('span','hint');type.textContent=SHARE_KINDS.find(x=>x[0]===kind)?.[1]||kind;label.appendChild(type);card.appendChild(label);
+      const type=el('span','hint');type.textContent=(it.optionalLibrarySaved?'Mod edit':it.adopt?'Adaptation':'New item')+' · '+(SHARE_KINDS.find(x=>x[0]===kind)?.[1]||kind);label.appendChild(type);card.appendChild(label);
       communityButton(card,'Inspect',async()=>AddonPreview.openItem({kind,item:it},{families:DB.families||{}}));tiles.appendChild(card);
     }
   }
@@ -4186,13 +4180,13 @@ function drawIncoming(P) {
          new name - and the choice is made here rather than guessed. */
       const how = el("div"); how.style.cssText = "margin:-4px 0 12px 26px";
       const s = document.createElement("select");
-      [["replace", "replace mine with theirs"],
-       ["rename", "keep both — theirs gets a new id"]].forEach(o => {
+      (it.adopt?[["replace", "replace mine with theirs (keep original item ID)"]]:[["replace", "replace mine with theirs"],
+       ["rename", "keep both — theirs gets a new id"]]).forEach(o => {
         const op = document.createElement("option");
         op.value = o[0]; op.textContent = o[1]; s.appendChild(op);
       });
       s.style.maxWidth = "320px";
-      s.value = entry.how || "rename";
+      s.value = it.adopt ? "replace" : entry.how || "rename";
       entry.how = s.value;
       s.onchange = () => { entry.how = s.value; renderPane(); };
       how.appendChild(s);
@@ -4233,7 +4227,7 @@ function takeIncoming() {
     if (entry.kind === "boxes" && takeRule(it)) rules++;
     const at = arr.findIndex(x => x.id === it.id);
     if (at < 0) { arr.push(it); added++; return; }
-    if (entry.how === "replace") { arr[at] = it; replaced++; return; }
+    if (entry.how === "replace" || it.adopt) { arr[at] = it; replaced++; return; }
     it.id = uniqueId(it.id);
     arr.push(it); renamed++;
   });

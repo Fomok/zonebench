@@ -110,7 +110,7 @@ function drawCommunityPublish(P,listing=null,sessionChecked=false){
  const draft=COMMUNITY_DRAFTS.get(draftKey);
  communityMessage(card,listing?'Changes update this listing instead of creating another version in the list.':'Give your add-on a name and explain what it adds. Your draft stays here while you change the selected items.');
  const fields=el('div','share-publish-fields');card.appendChild(fields);
- for(const [key,label,max,type] of [['name','Add-on name',100,'text'],['author','Author display name',60,'text'],['version','Version',32,'text'],['description','Description',2000,'textarea'],['dependencies','Required mods (optional)',500,'text']]){
+ for(const [key,label,max,type] of [['name','Add-on name',100,'text'],['author','Author display name',60,'text'],['version','Version',32,'text'],['description','Description',2000,'textarea'],['dependencies','Required mods / source mods',500,'text']]){
   const input=communityField(fields,label,draft[key],type);input.maxLength=max;input.oninput=()=>{draft[key]=input.value;};
  }
  let currentPack=null;
@@ -120,7 +120,7 @@ function drawCommunityPublish(P,listing=null,sessionChecked=false){
   const status=el('p','hint','Loading published contents…');contents.appendChild(status);
   Community.request('pack',{id:listing.id}).then(result=>{
    if(!card.isConnected)return;ZB.validateAddon(result.pack);currentPack=result.pack;
-   const local=EditorLibrary.entries('addons');
+   const local=CommunityDownload.candidates(DB,SEED);
    const fresh=CommunityUpdateSelection.candidates(listing,currentPack,local);
    const previous=new Map((draft.rows||[]).map(row=>[row.key,row]));
    draft.rows=fresh.map(row=>{const old=previous.get(row.key);return old?{...row,selected:old.selected,useLocal:!!row.local&&old.useLocal}:row;});
@@ -139,7 +139,7 @@ function drawCommunityPublish(P,listing=null,sessionChecked=false){
    }
   }).catch(error=>status.textContent=error.message+' Published contents have not changed.');
  }
- const updatePack=()=>{if(!listing)return Community.packSelection();if(!currentPack)throw Error('Wait for the published contents to load.');return CommunityUpdateSelection.build(currentPack,draft.rows,DB.families);};
+ const updatePack=()=>{if(!listing)return Community.packSelection();if(!currentPack)throw Error('Wait for the published contents to load.');const pack=CommunityUpdateSelection.build(currentPack,draft.rows,DB.families);pack.items=pack.items.map(({kind,item})=>({kind,item:CommunityDownload.publishItem(kind,item,SEED)}));return pack;};
  const review=el('div','share-publish-review');card.appendChild(review);review.appendChild(el('h2',null,listing?'Review and save':'3. Preview and publish'));
  const n=Community.packSelection().items.length;
  communityMessage(review,listing?'Preview the version you are about to save.':n+' selected item'+(n===1?'':'s')+'. The first four provide the listing preview.');
@@ -153,6 +153,7 @@ function drawCommunityPublish(P,listing=null,sessionChecked=false){
  const publish=communityButton(review,listing?'Save update':'Publish add-on',async()=>{
   if(!draft.agree)throw new Error('Confirm public sharing first.');
   const pack=updatePack();if(!listing&&!pack.items.length)throw new Error('Select items to publish.');
+  await CommunityDownload.validateExport({listing:{id:listing?.id||'publication-preview',name:draft.name,version:draft.version},pack});
   const data={name:draft.name,author:draft.author,version:draft.version,description:draft.description,dependencies:draft.dependencies};
   if(listing){data.id=listing.id;data.expectedRevision=listing.revision;data.pack=pack;}else data.pack=pack;
   await Community.request(listing?'update':'publish',data);COMMUNITY_DRAFTS.delete(draftKey);COMMUNITY_EDIT=null;COMMUNITY_MODE='mine';COMMUNITY_OFFSET=0;TAB='catalog';render();

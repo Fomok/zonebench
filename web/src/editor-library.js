@@ -31,6 +31,7 @@ async function importPack(result,kind,id,navigate=true){
  const used=new Set(kinds.flatMap(k=>(DB[k]||[]).map(x=>x.id))),mapping=new Map(),incoming=[];
  for(const entry of result.pack.items){
   const old=DB[entry.kind]?.find(x=>x.communitySource?.id===result.listing.id&&x.communitySource.originalId===entry.item.id);
+  if(entry.item.adopt&&!old&&used.has(entry.item.id))throw Error('This patch targets an item already in your project. Open the add-on in Browse add-ons and choose Open in editor to review replacing it.');
   let next=old?.id||entry.item.id,n=2;while(!old&&used.has(next))next=entry.item.id+'_'+n++;
   used.add(next);mapping.set(entry.item.id,next);if(old)continue;
   const item=clone(entry.item);item.id=next;item.new=true;item.addonItemId=await CommunityDownload.identity(result.listing.id+'/'+entry.kind+'/'+entry.item.id);
@@ -113,14 +114,20 @@ function saveModItem(){
 }
 function modOverridePlan(item,reference=id=>id){
  const kind=kinds.find(k=>(DB[k]||[]).includes(item));if(!kind||!item.optionalLibrarySaved)throw Error('Select a saved mod edit.');
- const source=clone(item),base=Workbench.baseline?.(kind,item.id)||(SEED[kind]||[]).find(x=>x.id===item.id)||{};
- const comparable=(value,key)=>key==='fit'?{zoom:value?.zoom??1,dx:value?.dx||0,dy:value?.dy||0}:value;
- const changed=keys=>keys.some(key=>JSON.stringify(comparable(item[key],key))!==JSON.stringify(comparable(base[key],key)));
- source.adopt=true;source.adaptationId=item.modOverrideId;
- source.own={size:true,name:changed(['name','descr']),price:changed(['cost','weight']),look:!!item.icon&&changed(['icon','fit','cellw','cellh']),craft:!!item.craft&&changed(['craft']),repair:kind==='rigs'&&changed(['parts','yield','repair','repairBonus','slots']),shelves:changed(['shelves']),drops:false};
+ const base=Workbench.baseline?.(kind,item.id)||(SEED[kind]||[]).find(x=>x.id===item.id)||{};
+ const source=modOverrideSource(kind,item,base);
  if(source.craft?.parts)source.craft.parts=source.craft.parts.map(([id,count])=>[reference(id),count]);
  for(const key of ['parts','yield'])if(Array.isArray(source[key]))source[key]=source[key].map(reference);
  return AdaptationExport.plan(DB,SEED,kind,source);
+}
+function modOverrideSource(kind,item,base){
+ if(item.patchOnly)return clone(item);
+ const source=clone(item);
+ const comparable=(value,key)=>key==='fit'?{zoom:value?.zoom??1,dx:value?.dx||0,dy:value?.dy||0}:value;
+ const changed=keys=>keys.some(key=>JSON.stringify(comparable(item[key],key))!==JSON.stringify(comparable(base[key],key)));
+ source.adopt=true;source.patchOnly=true;source.adaptationId=item.modOverrideId;
+ source.own={size:changed(['size']),storage:changed(['slots','pins','band','grants','tier','inw','inh','stack','takes','snd','kg']),name:changed(['name','descr']),price:changed(['cost','weight']),look:!!item.icon&&changed(['icon','fit','cellw','cellh']),craft:!!item.craft&&changed(['craft']),repair:kind==='rigs'&&changed(['parts','yield','repair','repairBonus','slots']),shelves:changed(['shelves']),drops:false};
+ return source;
 }
 function planLibraryPackage(selected,settings){
  if(!selected.length)throw Error('Select at least one item.');
@@ -167,5 +174,5 @@ async function exportFocused(){
  const result=await AddonExport.build(project,SEED),blob=await result.blob,url=URL.createObjectURL(blob),link=document.createElement('a');
  link.href=url;link.download=root.ZonebenchAddonFilename(project.independentAddon.name,project.independentAddon.version);document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
 }
-root.EditorLibrary={planLibraryPackage,saveModItem,modOverridePlan,buildLibraryPackage,removeEntry,isHidden,addonPackageDialog,addonPackageProject,focusedFindings,saveAdaptation,inspect,packageDialog,adapt,label,exportFocused,getFilters:source=>filters[source]||{},saveFilters:(source,value)=>filters[source]=value,entries,choose,select,resolve,open,importPack,route,get scope(){return scope;},get focused(){return focused;},clear(){focused=null;},isFocused:kind=>!!focused&&focused.kind===kind};
+root.EditorLibrary={modOverrideSource,planLibraryPackage,saveModItem,modOverridePlan,buildLibraryPackage,removeEntry,isHidden,addonPackageDialog,addonPackageProject,focusedFindings,saveAdaptation,inspect,packageDialog,adapt,label,exportFocused,getFilters:source=>filters[source]||{},saveFilters:(source,value)=>filters[source]=value,entries,choose,select,resolve,open,importPack,route,get scope(){return scope;},get focused(){return focused;},clear(){focused=null;},isFocused:kind=>!!focused&&focused.kind===kind};
 })(globalThis);
