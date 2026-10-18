@@ -15,6 +15,6 @@ function advanced(){const found=current();if(found){EditorLibrary.open({kind:fou
 function pictures(){return Object.fromEntries(kinds.map(kind=>[kind,(SEED[kind]||DB[kind]||[]).find(x=>x.icon)?.icon||null]));}
 function rules(){return Object.keys(DB.families||{}).filter(x=>x!=='any').map(id=>({id,name:id.replaceAll('_',' ')}));}
 function recipe(kind,item){if(kind==='rigs')return EMIT.rigRecipe({...item,craft:null});if(kind==='pouches')return EMIT.pouchRecipe(item);return {kit:1,book:'recipe_basic_0',cat:2,parts:[]};}
-function ingredient(id){for(const kind of kinds){const it=(DB[kind]||SEED[kind]||[]).find(x=>x.id===id);if(it)return {id,name:it.name,icon:it.icon};}return null;}
+function ingredient(id){for(const kind of kinds){const it=(DB[kind]||SEED[kind]||[]).find(x=>x.id===id);if(it)return {id,name:it.name,icon:root.ItemIcons?.source(it)||it.icon};}return null;}
 root.EditorFlow={saveToLibrary(){const found=current();if(!found)throw Error('Draft not found.');LibraryWorkflow.save({kind:found.kind,item:DB[found.kind].find(x=>x.addonItemId===selected.id),local:true});},repairDefaults:item=>({parts:EMIT.partsDefault(item.slots),bonus:EMIT.bonusFor(item.slots)}),removeDraft,undoRemoval:()=>Workbench.undo(),recipe,ingredient,select,current,drafts,create,open,save,review,download,advanced,pictures,rules,route:()=>selected?'#editor/new/'+selected.kind+'/'+selected.id:'#editor/create'};
 })(globalThis);

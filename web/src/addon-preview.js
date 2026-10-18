@@ -23,10 +23,11 @@ function geometry(entry){
  return {rects,width,height,automatic};
 }
 function picture(entry,large=false){
- const wrap=node('div','addon-picture'+(large?' large':''));const it=entry.item;
+ const wrap=node('div','addon-picture'+(large?' large':''));const it=entry.item,original=root.ItemIcons?.original(it);
  if(it.icon&&/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=\s]+$/.test(it.icon)){
   const img=node('img');img.src=it.icon;img.alt=it.name+' inventory icon';img.decoding='async';wrap.appendChild(img);
- }else wrap.appendChild(node('span','hint','No icon supplied'));
+ }else if(original){const img=node('img');img.src=original;img.alt=(it.name||it.id)+' in-game icon';img.decoding='async';wrap.appendChild(img);}
+ else wrap.appendChild(node('span','hint','No icon supplied'));
  return wrap;
 }
 function valueView(value,depth=0){

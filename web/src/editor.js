@@ -595,7 +595,8 @@ function renderList(){
       const r=el("div","row"+(it.id===SEL[TAB]?" on":"")
         +(it.new&&!it.adopt?" isnew":"")+(it.adopt?" isadopt":""));
       const ic=el("div","ic");
-      if(it.icon){ const i=new Image(); i.src=it.icon; ic.appendChild(i); }
+      const displayIcon=window.ItemIcons?.source(it)||it.icon;
+      if(displayIcon){ const i=new Image(); i.src=displayIcon; ic.appendChild(i); }
       else ic.appendChild(el("span",null,"&#9634;"));
       const tx=el("div","tx");
       tx.appendChild(el("div","nm",esc(it.name||it.id)));
@@ -955,7 +956,9 @@ function iconWell(it, caption){
   const paint=()=>{
     d.innerHTML="";
     if(!it.icon){
-      d.appendChild(el("div","ph","drop a PNG here<br>or click to pick one"));
+      const original=window.ItemIcons?.original(it);
+      if(original){const image=new Image();image.src=original;image.alt=(it.name||it.id)+" in-game icon";image.style.cssText="max-width:146px;max-height:120px;object-fit:contain";d.appendChild(image);}
+      d.appendChild(el("div","ph",original?"Current in-game icon<br>drop a PNG to replace it":"drop a PNG here<br>or click to pick one"));
       return;
     }
     d.appendChild(fitPreview(it, 146, 156));

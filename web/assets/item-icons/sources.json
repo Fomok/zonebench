@@ -1,0 +1,117 @@
+{
+  "note": "Display-only crops from the installed Market Catalog Test profile, 2026-10-18. Custom replacement icons take precedence. These files never become export textures.",
+  "items": {
+    "itm_backpack": {
+      "mod": "Kos' GRIP v1.6 (GAMMA Remastered Icon Pack)",
+      "config": "configs/mod_system_zzzzzzz_GRIP_backpacks.ltx",
+      "texture": "textures/ui/ui_GRIP_backpacks.dds",
+      "sourceSha256": "32ee92fa3041d019d1b148f9def12d5f68197ba7f7c42fd9a51aea55617339ca",
+      "rect": [
+        0,
+        0,
+        200,
+        200
+      ],
+      "file": "itm_backpack.png",
+      "sha256": "27d3ac00e1da1a6b39a0085f897787d34cb4eb12321f37d56fcede091f0bf690"
+    },
+    "equ_small_pack": {
+      "mod": "Kos' GRIP v1.6 (GAMMA Remastered Icon Pack)",
+      "config": "configs/mod_system_zzzzzzz_GRIP_backpacks.ltx",
+      "texture": "textures/ui/ui_GRIP_backpacks.dds",
+      "sourceSha256": "32ee92fa3041d019d1b148f9def12d5f68197ba7f7c42fd9a51aea55617339ca",
+      "rect": [
+        200,
+        0,
+        200,
+        200
+      ],
+      "file": "equ_small_pack.png",
+      "sha256": "69acdc1e9ef026eab0798d725b295e38aaa86f5ad1491f9ef849465a13bd2976"
+    },
+    "equ_small_military_pack": {
+      "mod": "Kos' GRIP v1.6 (GAMMA Remastered Icon Pack)",
+      "config": "configs/mod_system_zzzzzzz_GRIP_backpacks.ltx",
+      "texture": "textures/ui/ui_GRIP_backpacks.dds",
+      "sourceSha256": "32ee92fa3041d019d1b148f9def12d5f68197ba7f7c42fd9a51aea55617339ca",
+      "rect": [
+        400,
+        0,
+        200,
+        200
+      ],
+      "file": "equ_small_military_pack.png",
+      "sha256": "048fb68131fd3e2c07a57da48e3e737a52f8d4987bd044c42f6514cb3e438a3e"
+    },
+    "equ_military_pack": {
+      "mod": "Kos' GRIP v1.6 (GAMMA Remastered Icon Pack)",
+      "config": "configs/mod_system_zzzzzzz_GRIP_backpacks.ltx",
+      "texture": "textures/ui/ui_GRIP_backpacks.dds",
+      "sourceSha256": "32ee92fa3041d019d1b148f9def12d5f68197ba7f7c42fd9a51aea55617339ca",
+      "rect": [
+        600,
+        0,
+        200,
+        200
+      ],
+      "file": "equ_military_pack.png",
+      "sha256": "3e3746f5cdafa943a4afe49bebcf20331909adf9b65b35c67b299d37b82f198d"
+    },
+    "equ_tourist_pack": {
+      "mod": "Kos' GRIP v1.6 (GAMMA Remastered Icon Pack)",
+      "config": "configs/mod_system_zzzzzzz_GRIP_backpacks.ltx",
+      "texture": "textures/ui/ui_GRIP_backpacks.dds",
+      "sourceSha256": "32ee92fa3041d019d1b148f9def12d5f68197ba7f7c42fd9a51aea55617339ca",
+      "rect": [
+        800,
+        0,
+        200,
+        200
+      ],
+      "file": "equ_tourist_pack.png",
+      "sha256": "a41730733ab6e3d6b60b42f193cc3a47f6a0b4ba4d6b8c7b27a7732ac574808f"
+    },
+    "af_magpouch_s": {
+      "mod": "Mags Reloaded Fork by Priler UPDATE 6",
+      "config": "configs/mod_system_magpouches.ltx",
+      "texture": "textures/ui/ui_magpouches.dds",
+      "sourceSha256": "78a0ad61c5f884e592ad6a7fb6514bacfd1c48019c7c388ef2d72533ff84f10c",
+      "rect": [
+        0,
+        0,
+        50,
+        50
+      ],
+      "file": "af_magpouch_s.png",
+      "sha256": "860caeca0d6b7595f6000e3b24b070ec561d1c159c10df6ee488d59bc6ed169c"
+    },
+    "af_magpouch_m": {
+      "mod": "Mags Reloaded Fork by Priler UPDATE 6",
+      "config": "configs/mod_system_magpouches.ltx",
+      "texture": "textures/ui/ui_magpouches.dds",
+      "sourceSha256": "78a0ad61c5f884e592ad6a7fb6514bacfd1c48019c7c388ef2d72533ff84f10c",
+      "rect": [
+        50,
+        0,
+        50,
+        50
+      ],
+      "file": "af_magpouch_m.png",
+      "sha256": "0e3eada75b7a80edb662735c913247268f3b63c11425e25c065e3898dd8c12c7"
+    },
+    "af_magpouch_l": {
+      "mod": "Mags Reloaded Fork by Priler UPDATE 6",
+      "config": "configs/mod_system_magpouches.ltx",
+      "texture": "textures/ui/ui_magpouches.dds",
+      "sourceSha256": "78a0ad61c5f884e592ad6a7fb6514bacfd1c48019c7c388ef2d72533ff84f10c",
+      "rect": [
+        100,
+        0,
+        50,
+        50
+      ],
+      "file": "af_magpouch_l.png",
+      "sha256": "8751836a131682ba576d817371044dbb1c799288d9508e4eab5eff90d0736af8"
+    }
+  }
+}
