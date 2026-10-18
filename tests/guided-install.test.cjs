@@ -8,3 +8,12 @@ test('ZONA checklist selects its own magazine and UI patches',async()=>{
  const vm=require('node:vm'),fs=require('node:fs'),c=vm.createContext({});vm.runInContext(fs.readFileSync('web/src/installation-guide.js','utf8'),c);const steps=c.InstallationGuide.steps(answers);assert(steps.find(x=>x[0]==='zona'));assert.match(steps.find(x=>x[0]==='mags')[1],/Mags Redux ammo fix/);assert.match(steps.find(x=>x[0]==='sota')[1],/\(ZONA\)/);
 });
 test('manual IDs reject malformed and injectable section names',async()=>{const {validItemId}=await import('../svelte/lib/item-id.mjs');assert(validItemId('zona_custom_part_2'));for(const x of ['', 'bad id','x\n[evil]','../file','x;comment','1bad'])assert(!validItemId(x));});
+
+test('FG checklist preserves normal launch and distinguishes the obsolete helper from the model',async()=>{
+ const {checklistReady}=await import('../svelte/lib/guided-install.mjs');
+ const answers={game:'gamma',sota:false,bodycam:'fg',devices:false,looting:false};assert(checklistReady(answers));
+ const vm=require('node:vm'),fs=require('node:fs'),c=vm.createContext({});vm.runInContext(fs.readFileSync('web/src/installation-guide.js','utf8'),c);
+ const text=c.InstallationGuide.steps(answers).find(x=>x[0]==='engine')[1];
+ for(const expected of ['nvngx.dll_dlssnr.dll','KEEP nvngx_dlssnr.dll','FrameGen.External=true','own FG off','OverlayMenu=false','MO2 Play','loose MO2 files override','FG UI/scope'])assert(text.includes(expected),expected);
+ const old=c.InstallationGuide.steps({...answers,bodycam:false}).find(x=>x[0]==='engine')[1];assert(old.includes('2026.10.11'));assert(!old.includes('nvngx'));
+});

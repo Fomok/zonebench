@@ -1,6 +1,20 @@
 (function(root){
 'use strict';
 const repo='Fomok/xray-monolith-inventory-edits';
+// Explicitly approved experimental release; never promoted to the default engine.
+const fgReleaseSpec={"tag":"bodycam-dlss-fg-2026.10.18","allowPrerelease":true,"assets":{"engine":{"tag":"bodycam-dlss-fg-2026.10.18","name":"Squared.Away.Engine.Bodycam.DLSS.FG.DX11.AVX.zip"},"gamma":{"tag":"bodycam-dlss-2026.10.18","name":"Bodycam.GAMMA.Patch.1.1.0.zip"},"shaders":{"tag":"bodycam-dlss-2026.10.18","name":"Bodycam.DLSS.Grass.Motion.Shader.Patch.zip"},"ui":{"tag":"bodycam-dlss-fg-2026.10.18","name":"Squared.Away.FG.UI.Scope.Patch.zip"},"optionalNr":{"tag":"bodycam-dlss-fg-2026.10.18","name":"Squared.Away.Optional.DLSS5.NR.Runtime.zip"}}};
+function frameGeneration(raw){
+ if(!fgReleaseSpec)return null;
+ const release=raw.find(r=>r.tag_name===fgReleaseSpec.tag&&!r.draft&&(!r.prerelease||fgReleaseSpec.allowPrerelease===true));if(!release)return null;
+ const result={tag:release.tag_name,version:'Bodycam + DLSS + Frame Generation',url:'https://github.com/'+repo+'/releases/tag/'+encodeURIComponent(release.tag_name)};
+ for(const key of ['engine','gamma','shaders','ui','optionalNr']){
+  const spec=fgReleaseSpec.assets[key];if(!spec){if(key==='optionalNr')continue;return null;}
+  const source=raw.find(r=>r.tag_name===spec.tag&&!r.draft&&(!r.prerelease||(spec.tag===fgReleaseSpec.tag&&fgReleaseSpec.allowPrerelease===true)));
+  const matches=source?.assets?.filter(a=>a.name===spec.name&&a.browser_download_url==='https://github.com/'+repo+'/releases/download/'+spec.tag+'/'+spec.name)||[];
+  if(matches.length!==1||/merge|developer|source/i.test(matches[0].name)){if(key==='optionalNr')continue;return null;}result[key]=matches[0];
+ }
+ return result;
+}
 function pick(release){
  if(!release||release.draft||!Array.isArray(release.assets))return null;
  const mod=release.assets.filter(a=>/^Squared[-_ .]*Away[-_ .]+(?:\d|FOMOD)/i.test(a.name)&&/\.zip$/i.test(a.name)&&!/engine|source|model[-_ .]*test|for[-_ .]*developers|all[-_ .]*dx|dx(?:8|9|10|11)/i.test(a.name));
@@ -9,7 +23,7 @@ function pick(release){
  const safe=a=>{try{const u=new URL(a.browser_download_url);return u.protocol==='https:'&&u.hostname==='github.com'&&u.pathname.startsWith('/'+repo+'/releases/download/');}catch{return false;}};
  if(!safe(mod[0])||!safe(engine[0]))return null;
  const bodycam=release.assets.filter(a=>/bodycam/i.test(a.name)&&/engine/i.test(a.name)&&/\.zip$/i.test(a.name)&&safe(a));
- return {tag:release.tag_name,name:release.name||release.tag_name,preview:!!release.prerelease,date:release.published_at,notes:release.body||'',url:'https://github.com/'+repo+'/releases/tag/'+encodeURIComponent(release.tag_name),mod:mod[0],engine:engine[0],engineUpdate:release.engineUpdate||null,bodycamUpdate:release.bodycamUpdate||null,bodycamDlss:release.bodycamDlss||null,bodycam:bodycam.length===1?bodycam[0]:null,stashGrid:release.tag_name==='v2.1.0'?(release.assets.find(a=>a.name==='Squared.Away.Stash.Grid.Optional.Test.2.zip'&&safe(a))||release.assets.find(a=>/^Squared[ .]Away[ .]Stash[ .]Grid[ .]Optional[ .]Test\.zip$/.test(a.name)&&safe(a)))||null:null};
+ return {tag:release.tag_name,name:release.name||release.tag_name,preview:!!release.prerelease,date:release.published_at,notes:release.body||'',url:'https://github.com/'+repo+'/releases/tag/'+encodeURIComponent(release.tag_name),mod:mod[0],engine:engine[0],engineUpdate:release.engineUpdate||null,bodycamUpdate:release.bodycamUpdate||null,bodycamDlss:release.bodycamDlss||null,bodycamFg:release.bodycamFg||null,bodycam:bodycam.length===1?bodycam[0]:null,stashGrid:release.tag_name==='v2.1.0'?(release.assets.find(a=>a.name==='Squared.Away.Stash.Grid.Optional.Test.2.zip'&&safe(a))||release.assets.find(a=>/^Squared[ .]Away[ .]Stash[ .]Grid[ .]Optional[ .]Test\.zip$/.test(a.name)&&safe(a)))||null:null};
 }
 function compatible(raw){
  const previous=raw.find(r=>r.tag_name==='v2.0.3'&&!r.draft);
@@ -20,6 +34,7 @@ function compatible(raw){
  const dlssAsset=name=>dlssRelease?.assets.find(a=>a.name===name&&a.browser_download_url==='https://github.com/'+repo+'/releases/download/'+dlssRelease.tag_name+'/'+name);
  const dlssEngine=dlssAsset('Squared.Away.Engine.Bodycam.DLSS.DX11.AVX.zip'),dlssShaders=dlssAsset('Bodycam.DLSS.Grass.Motion.Shader.Patch.zip'),dlssGamma=dlssAsset('Bodycam.GAMMA.Patch.1.1.0.zip');
  if(dlssEngine&&dlssShaders&&dlssGamma){const current=paired.find(r=>r.tag_name==='v2.1.0');if(current)current.bodycamDlss={engine:dlssEngine,shaders:dlssShaders,gamma:dlssGamma};}
+ const fg=frameGeneration(raw);if(fg){const current=paired.find(r=>r.tag_name==='v2.1.0');if(current)current.bodycamFg=fg;}
  const bodycamRelease=raw.find(r=>r.tag_name==='bodycam-0.3-2026.10.16'&&!r.draft&&!r.prerelease);
  return paired.map(r=>{
   if(r.tag_name!=='v2.1.0'||!bodycamRelease)return r;

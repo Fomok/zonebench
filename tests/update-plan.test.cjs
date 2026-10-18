@@ -24,3 +24,12 @@ test('current hotfix users can update only the engine or keep the already update
  }
  const old=items.find(r=>r.tag==='v2.0.3');assert.match(old.engine.browser_download_url,/v2\.0\.3/);assert.match(old.bodycam.browser_download_url,/v2\.0\.3/);
 });
+
+test('optional FG engine update keeps the mod and never substitutes a different engine variant',async()=>{
+ const {updatePlan}=await import('../svelte/lib/update-plan.mjs');
+ const rows=[{...releases[0],bodycamFg:{tag:'fg-release',version:'FG',engine:asset('fg-engine')}}];
+ const update=updatePlan(rows,rows[0].tag,'bodycam-fg','previous');assert(!update.modNeeded);assert(update.engineNeeded);assert.equal(update.engine.browser_download_url,'fg-engine');
+ assert(!updatePlan(rows,rows[0].tag,'bodycam-fg','fg-release').engineNeeded);
+ assert.equal(updatePlan(rows,rows[0].tag,'standard').engine.browser_download_url,'engine3');
+ const missing=updatePlan(releases,'v2.0.4','bodycam-fg');assert.equal(missing.engine,undefined);assert(missing.engineNeeded);
+});
