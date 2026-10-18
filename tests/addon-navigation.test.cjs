@@ -29,3 +29,9 @@ test('download history links resolve a public add-on without selecting an admin 
  c.site.go('catalog');assert.equal(c.location.hash,'#addons/view/listing_123');
  c.site.addons('mine');assert.equal(c.location.hash,'#addons/mine');
 });
+
+test('full editor router preserves installation deep links and Help independently',()=>{
+ const c=setup('#installation');assert.equal(c.site.tabFromHash(),'installation');c.site.go('installation');assert.equal(c.location.hash,'#installation');
+ c.site.go('help');assert.equal(c.location.hash,'#help');c.location.hash='#installation';c.events.popstate();assert.equal(c.get('TAB'),'installation');
+ c.location.hash='#help';c.events.hashchange();assert.equal(c.get('TAB'),'help');c.location.hash='#installation';c.events.hashchange();assert.equal(c.get('TAB'),'installation');
+});

@@ -1,4 +1,4 @@
-<script>
+<script>import {openInstallation} from '../lib/installation-navigation.mjs';
 
  import BodycamDlss from '../components/BodycamDlss.svelte';
  import BodycamFrameGeneration from '../components/BodycamFrameGeneration.svelte';
@@ -33,7 +33,7 @@
      {#if plan.engineNeeded}<div class="download-step"><div><h3>Update your {engineName} engine</h3><p>Install both <strong>bin</strong> and <strong>db/mods</strong> from the matching engine ZIP into your Anomaly folder.{variant!=='standard'?' This optional package is DX11-AVX only.':''}{variant==='bodycam-fg'?' Follow the FG installation card above, including proxy cleanup and matching loose MO2 patches.':''}</p></div>{#if plan.engine}<a class="tool primary" href={plan.engine.browser_download_url}>Download {engineName} engine</a>{:else}<p role="alert">No matching engine package is available. Check the release before updating.</p>{/if}</div>{:else}<div class="keep-engine"><strong>Keep your current engine.</strong><p>Your selected {engineName} engine is current. No engine download is needed.</p></div>{/if}
      {#if variant==='bodycam'&&plan.latest.bodycamUpdate?.patch}<p>GAMMA users: install the matching compatibility patch when updating Bodycam.</p><a class="tool" href={plan.latest.bodycamUpdate.patch}>Bodycam GAMMA Patch 1.1.0</a>{/if}
      <p class:important={plan.newGame}>{plan.newGame?'New game required: saves from before the 2.0 Update are not supported.':plan.unknown?'Already playing on 2.0.x? You can keep your save. Coming from before 2.0? Start a new game.':'Your existing 2.0.x save can continue.'}</p>
-     <div class="site-actions"><a class="tool" href="#patch-notes">What changed?</a><a class="tool" href="#help">Installation help</a></div>
+     <div class="site-actions"><a class="tool" href="#patch-notes">What changed?</a><a class="tool" href="#installation" onclick={openInstallation}>Installation help</a></div>
     </section>
    {/if}
   {:else}<p>No published update is available.</p>{/if}

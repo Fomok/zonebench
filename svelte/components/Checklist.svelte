@@ -1,17 +1,19 @@
 <script>
 
- import {tick} from 'svelte';
+ import {tick,onMount} from 'svelte';
+ let {autoStart=false}=$props();
+ onMount(()=>{if(autoStart)show('questions');});
  import {checklistReady,checklistSetup,advanceChecklist} from '../lib/guided-install.mjs';
  let page=$state('start'),answers=$state({game:null,sota:null,bodycam:null,devices:null,looting:null}),current=$state(0),question=$state(0),skippedMags=$state(false),panel,stepNodes=[];
  const questions=[['game','Which modpack do you use?','Select the installation you will play with.','MOD'],['sota','Do you use SOTA UI?','Choose the matching inventory interface and icon patch.','UI'],['bodycam','Which engine do you want?','Keep the standard engine or choose a separate Bodycam option.','ENGINE'],['devices','Do you use Wearable Devices?','Include support for the separate Wearable Devices mod.','WD'],['looting','Do you use Looting Takes Time Redux?','Include the optional Tarkov-like corpse looting patch.','LT']];
  const titles={mod:'Install Squared Away',engine:'Install the matching engine',mags:'Install magazine support (optional)',zona:'Check ZONA recipes and dependencies',anomaly:'Check your Anomaly setup',sota:'Choose your UI option',hd:'Install the correct icon framework',devices:'Enable Wearable Devices support',looting:'Set up corpse looting',order:'Check your load order',newgame:'New Game'};
  let ready=$derived(checklistReady(answers));
  let steps=$derived(window.InstallationGuide.steps(checklistSetup(answers)));
- async function show(next){page=next;await tick();panel?.scrollIntoView({block:'start',behavior:'smooth'});}
+ async function show(next){page=next;await tick();panel?.focus({preventScroll:true});panel?.scrollIntoView({block:'start',behavior:'smooth'});}
  function answer(key,value){answers[key]=value;current=0;skippedMags=false;if(question<questions.length-1)question++;else if(checklistReady(answers))show('steps');}
  async function check(index,value){if(!value&&steps[index][0]==='mags')skippedMags=false;current=advanceChecklist(current,index,value,steps.length);await tick();if(current<steps.length)stepNodes[current]?.scrollIntoView({block:'center',behavior:'smooth'});}
 </script>
-<section class="install-wizard" bind:this={panel} aria-label="Guided installation">
+<section class="install-wizard" bind:this={panel} tabindex="-1" aria-label="Guided installation">
 {#if page==='start'}
  <div class="wizard-invite"><div><p class="flow-kicker">YOUR SETUP. YOUR CHECKLIST.</p><h2>Install it for your modlist.</h2><p>Answer five quick questions. Get the right patches and follow the installation one step at a time.</p></div><button class="wizard-primary" onclick={()=>show('questions')}>Get my installation checklist →</button></div>
 {:else if page==='questions'}
