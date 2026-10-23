@@ -7,6 +7,7 @@ export function updatePlan(releases, installedTag, variant = 'standard', install
  const engine = variant === 'bodycam-fg' ? latest.bodycamFg?.engine : latest[key];
  const update = variant === 'bodycam-fg' ? latest.bodycamFg : variant === 'bodycam' ? (latest.bodycamUpdate || latest.engineUpdate) : latest.engineUpdate;
  const previousEngine = variant === 'bodycam-fg' ? installed?.bodycamFg?.engine : installed?.[key];
- const engineChanged = update ? installedEngine !== update.tag : !engine || !previousEngine || previousEngine.browser_download_url !== engine.browser_download_url;
+ const keepCompatible = installedEngine === 'compatible' && latest.modOnlyUpdate && engine && previousEngine?.browser_download_url === engine.browser_download_url;
+ const engineChanged = keepCompatible ? false : update ? installedEngine !== update.tag : !engine || !previousEngine || previousEngine.browser_download_url !== engine.browser_download_url;
  return { latest, installed, modNeeded: installed?.tag !== latest.tag, engineNeeded: engineChanged, engine, unknown: !installed, newGame: installedTag === 'legacy' || installedTag === '2026.9.12' };
 }

@@ -11,7 +11,7 @@ async function load(extra,{fallback=false,config=spec}={}){
 }
 test('verified FG release attaches only to current mod and preserves every existing engine choice',async()=>{
  const {items}=await load(release),current=items.find(r=>r.tag==='v2.1.0');assert(current.bodycamFg);assert(current.bodycamFg.ui);assert(current.bodycamDlss);assert(current.bodycam);assert(current.engine);
- assert(!current.engine.browser_download_url.includes(tag));assert(!current.bodycam.browser_download_url.includes(tag));assert(!current.bodycamDlss.engine.browser_download_url.includes(tag));assert(items.filter(r=>r.tag!=='v2.1.0').every(r=>!r.bodycamFg));
+ assert(!current.engine.browser_download_url.includes(tag));assert(!current.bodycam.browser_download_url.includes(tag));assert(!current.bodycamDlss.engine.browser_download_url.includes(tag));assert(items.filter(r=>!['v2.1.0','v2.1.0-hotfix1'].includes(r.tag)).every(r=>!r.bodycamFg));
 });
 test('unverified, draft, incomplete, duplicate or unsafe FG assets never produce a download choice',async()=>{
  assert(!(await load(release,{config:null})).items.find(r=>r.tag==='v2.1.0').bodycamFg);

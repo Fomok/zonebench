@@ -39,7 +39,7 @@ export async function start(sync){
   window.ZonebenchPages.clear();const target=document.querySelector('#pane');target.replaceChildren();
   document.body.classList.add('site-page');document.body.classList.toggle('home-page',route==='home');
   document.title=(route==='home'?'Squared Away':route)+' | ZoneBench';
-  sync({tab:route==='patch-notes'?'patchnotes':route,editor:false,tools:false,sections:false,version:'2.1.0',tabs:[],unread:window.PatchNotes.unread()});
+  sync({tab:route==='patch-notes'?'patchnotes':route,editor:false,tools:false,sections:false,version:'2.1.0 Hotfix 1',tabs:[],unread:window.PatchNotes.unread()});
   page=mount(Page,{target,props:{startGuide:route==='installation'}});target.scrollTop=0;
  }
  await loadScripts(lightFiles,import.meta.env.BASE_URL,document,__SITE_BUILD__);

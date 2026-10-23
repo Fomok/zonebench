@@ -76,7 +76,7 @@ function help(P){
  heading(P,'FIELD GUIDE','Get squared away.','Installation, compatibility and the ZoneBench editor.');
  InstallationGuide.render(P);
  const blocks=[
-  ["Squared Away 2.1.0", "ZoneBench targets Squared Away 2.1.0 with independent add-on support. Install the full mod through MO2 and use the standard or Bodycam 2.0.3 engine. Existing 2.0.x saves can continue. Downloads and patch-note history are available on this website."],
+  ["Squared Away 2.1.0 Hotfix 1", "Reinstall the full 2.1.0 Hotfix 1 mod archive through MO2, selecting your usual options. Disable Inventory Capacity Test 1, Corpse Move Fix 1.0 and the earlier combined hotfix patch if installed. Keep your existing matching engine; this hotfix needs no engine update. ZoneBench supports independent add-ons. Install the full mod through MO2 and use the standard or Bodycam 2.0.3 engine. Existing 2.0.x saves can continue. Downloads and patch-note history are available on this website."],
   [
     "Install the mod",
     "Use Anomaly 1.5.3, GAMMA or ZONA V1.38. Install the full Squared Away ZIP through Mod Organizer 2 (MO2). Its FOMOD installer lets you choose optional patches. Replace an older Squared Away installation instead of merging files, and disable old copies and hotfixes. Select only patches for mods you actually have."

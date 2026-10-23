@@ -1,8 +1,8 @@
 {
-  "baseline": "squared-away-2.1.0",
-  "modVersion": "2.1.0",
+  "baseline": "squared-away-2.1.0-hotfix1",
+  "modVersion": "2.1.0 Hotfix 1",
   "engineCommit": "aee0a6ad67c4a25b4d91651d45ce03ff8d7e68f9",
-  "sourceArchive": "Squared Away 2.1.0 Minor Update.zip",
+  "sourceArchive": "Squared Away 2.1.0 Hotfix 1.zip",
   "templates": {
     "configs/mod_system_amp_rigs.ltx": "14ceb6e9747bfffbae62ba06beb80adc1e5fa6ba55fea97c850d47df009d57fa",
     "configs/mod_system_amp_boxes.ltx": "206f2d7b30b4eaee96ec8b426a4b865c250b90155cdd82346749d20c7e5cfd4a",

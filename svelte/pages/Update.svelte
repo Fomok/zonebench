@@ -4,7 +4,7 @@
  import BodycamFrameGeneration from '../components/BodycamFrameGeneration.svelte';
  import {updatePlan} from '../lib/update-plan.mjs';
  const result=window.Releases.load();
- let installed=$state(''),variant=$state('standard'),installedEngine=$state('previous');
+ let installed=$state(''),variant=$state('standard'),installedEngine=$state('compatible');
  const engineName=$derived(variant==='bodycam-fg'?'Bodycam + DLSS + Frame Generation':variant==='bodycam'?'Bodycam':'standard');
  const version=r=>r.tag.replace(/^v/,'').replace(/-update$/,'');
 </script>
@@ -20,7 +20,7 @@
     <label>Installed mod version<select bind:value={installed}><option value="" disabled>Choose your version</option>{#each data.items.filter(r=>!r.preview&&/^v2\./.test(r.tag)) as release}<option value={release.tag}>{version(release)}</option>{/each}<option value="legacy">Before the 2.0 Update</option><option value="unknown">I’m not sure / another version</option></select></label>
     <fieldset><legend>Which engine do you use?</legend><div class="engine-options"><label class:selected={variant==='standard'}><input type="radio" bind:group={variant} value="standard"/>Standard</label><label class:selected={variant==='bodycam'}><input type="radio" bind:group={variant} value="bodycam"/>Bodycam</label>{#if data.items[0].bodycamFg}<label class:selected={variant==='bodycam-fg'}><input type="radio" bind:group={variant} value="bodycam-fg"/>Bodycam + DLSS + Frame Generation</label>{/if}</div></fieldset>
 
-   {#if engineUpdate}<label>Installed engine version<select bind:value={installedEngine}><option value="previous">Older engine / I’m not sure</option><option value={engineUpdate.tag}>{engineUpdate.version}</option></select></label>{/if}
+   {#if engineUpdate}<label>Installed engine version<select bind:value={installedEngine}>{#if data.items[0].modOnlyUpdate}<option value="compatible">Keep my existing compatible engine</option>{/if}<option value="previous">Older engine / I’m not sure</option><option value={engineUpdate.tag}>{engineUpdate.version}</option></select></label>{/if}
    </section>
    <BodycamDlss download={data.items[0].bodycamDlss}/><BodycamFrameGeneration download={data.items[0].bodycamFg}/>
    {@const plan=updatePlan(data.items,installed,variant,installedEngine)}
@@ -29,7 +29,7 @@
      <p class="eyebrow">YOUR UPDATE · {version(plan.latest)}</p>
      <h2>{plan.modNeeded?'Here’s what you need.':plan.engineNeeded?'An engine update is available.':'You’re up to date.'}</h2>
      {#if plan.unknown}<p>We can’t verify your installed files. Install both current packages to make sure they match.</p>{/if}
-     {#if plan.modNeeded}<div class="download-step"><div><h3>Update the mod</h3><p>Replace your old Squared Away installation in MO2 with this full package. Select the same optional patches you use now, and keep your separate add-ons below it.</p></div><a class="tool primary" href={plan.latest.mod.browser_download_url}>Download mod {version(plan.latest)}</a></div>{/if}
+     {#if plan.modNeeded}<div class="download-step"><div><h3>Update the mod</h3><p>Replace your old Squared Away installation in MO2 with this full package. Select the same optional patches you use now, and keep your separate add-ons below it. If installed, disable Inventory Capacity Test 1, Corpse Move Fix 1.0 and the earlier combined hotfix patch when moving to 2.1.0 Hotfix 1.</p></div><a class="tool primary" href={plan.latest.mod.browser_download_url}>Download mod {version(plan.latest)}</a></div>{/if}
      {#if plan.engineNeeded}<div class="download-step"><div><h3>Update your {engineName} engine</h3><p>Install both <strong>bin</strong> and <strong>db/mods</strong> from the matching engine ZIP into your Anomaly folder.{variant!=='standard'?' This optional package is DX11-AVX only.':''}{variant==='bodycam-fg'?' Follow the FG installation card above, including proxy cleanup and matching loose MO2 patches.':''}</p></div>{#if plan.engine}<a class="tool primary" href={plan.engine.browser_download_url}>Download {engineName} engine</a>{:else}<p role="alert">No matching engine package is available. Check the release before updating.</p>{/if}</div>{:else}<div class="keep-engine"><strong>Keep your current engine.</strong><p>Your selected {engineName} engine is current. No engine download is needed.</p></div>{/if}
      {#if variant==='bodycam'&&plan.latest.bodycamUpdate?.patch}<p>GAMMA users: install the matching compatibility patch when updating Bodycam.</p><a class="tool" href={plan.latest.bodycamUpdate.patch}>Bodycam GAMMA Patch 1.1.0</a>{/if}
      <p class:important={plan.newGame}>{plan.newGame?'New game required: saves from before the 2.0 Update are not supported.':plan.unknown?'Already playing on 2.0.x? You can keep your save. Coming from before 2.0? Start a new game.':'Your existing 2.0.x save can continue.'}</p>

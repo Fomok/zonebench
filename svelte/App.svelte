@@ -6,7 +6,7 @@
  import DownloadsNav from './components/DownloadsNav.svelte';
  import { start, go } from './bootstrap.js';
  let shell,header,brand;
- let view=$state({tab:'home',editor:false,tools:false,sections:false,version:'2.1.0',tabs:[],unread:false});let error=$state('');let ready=$state(false);
+ let view=$state({tab:'home',editor:false,tools:false,sections:false,version:'2.1.0 Hotfix 1',tabs:[],unread:false});let error=$state('');let ready=$state(false);
  const links=[['patchnotes','Patch Notes'],['home','Home'],['introduction','Introduction'],['editor','Editor'],['catalog','Add-ons'],['downloads','Downloads'],['help','Help'],['account','Account']];
  const hashes={patchnotes:'patch-notes',catalog:'community',editor:'editor'};
  onMount(()=>{
